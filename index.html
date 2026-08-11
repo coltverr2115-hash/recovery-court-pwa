@@ -169,6 +169,11 @@
   .history-bar-track{flex:1; height:8px; background:#EFEAE0; border-radius:4px; overflow:hidden;}
   .history-bar-fill{height:100%; border-radius:4px;}
   .history-score{font-family:'JetBrains Mono',monospace; font-size:11.5px; width:26px; text-align:right; flex:0 0 auto;}
+
+  .manage-row{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.7rem 0.9rem; margin-bottom:0.55rem;}
+  .manage-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .manage-btn{flex:0 0 auto; border:1px solid var(--hairline); background:var(--paper); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:12px; padding:7px 10px; border-radius:8px; cursor:pointer;}
+  .manage-btn.danger{color:var(--red-dark); border-color:#F0C9C9;}
 </style>
 </head>
 <body>
@@ -310,8 +315,20 @@
     </div>
     <div class="coach-stats" id="coachStats"></div>
     <div class="team-advice" id="teamAdvice"></div>
-    <p class="goal-intro" style="margin-bottom:0.6rem;">選手一覧(今日の状態)</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+      <p class="goal-intro" style="margin-bottom:0;">選手一覧(今日の状態)</p>
+      <button class="btn-link" onclick="showScreen('screenCoachManage'); renderPlayerManage();">選手を管理</button>
+    </div>
     <ul class="roster-list" id="rosterList"></ul>
+  </div>
+
+  <div class="screen" id="screenCoachManage">
+    <div class="top-bar" style="padding:0 0 1rem;">
+      <p class="who">選手管理</p>
+      <button class="btn-link" onclick="showScreen('screenCoachDash'); renderDashboard();">一覧に戻る</button>
+    </div>
+    <p class="hint" style="margin-bottom:1rem;">名前の修正や、退部した選手の削除ができます。削除時は記録データを残すかどうか選べます。</p>
+    <ul class="roster-list" id="manageList"></ul>
   </div>
 
   <div class="screen" id="screenCoachDetail">
@@ -364,6 +381,15 @@ async function fsGetDoc(collection, id){
 async function fsSetDoc(collection, id, data){
   try{
     await db.collection(collection).doc(id).set(data);
+    return true;
+  }catch(e){
+    document.getElementById('connError').classList.add('show');
+    return false;
+  }
+}
+async function fsDeleteDoc(collection, id){
+  try{
+    await db.collection(collection).doc(id).delete();
     return true;
   }catch(e){
     document.getElementById('connError').classList.add('show');
@@ -701,6 +727,65 @@ async function renderDashboard(){
       '<span class="badge-level '+ (p.isToday?p.latest.levelKey:'none') +'">'+badgeText+'</span>';
     listEl.appendChild(row);
   });
+}
+
+/* ---------------- coach: player management ---------------- */
+async function renderPlayerManage(){
+  var listEl = document.getElementById('manageList');
+  listEl.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var roster = await loadRoster();
+  if(roster.length===0){
+    listEl.innerHTML = '<p class="placeholder">まだ登録された選手がいません</p>';
+    return;
+  }
+  listEl.innerHTML = '';
+  roster.forEach(function(p){
+    var row = document.createElement('li');
+    row.className = 'manage-row';
+    row.innerHTML =
+      '<span class="manage-name">'+p.name+'</span>' +
+      '<button class="manage-btn" data-action="edit">名前を編集</button>' +
+      '<button class="manage-btn danger" data-action="delete">削除</button>';
+    row.querySelector('[data-action="edit"]').onclick = function(){ editPlayerName(p.id, p.name); };
+    row.querySelector('[data-action="delete"]').onclick = function(){ deletePlayerFlow(p.id, p.name); };
+    listEl.appendChild(row);
+  });
+}
+
+async function editPlayerName(id, currentName){
+  var newName = prompt('新しい名前を入力してください', currentName);
+  if(newName===null) return;
+  newName = newName.trim();
+  if(!newName){ alert('名前を空にはできません。'); return; }
+
+  var roster = await loadRoster();
+  var idx = roster.findIndex(function(p){ return p.id===id; });
+  if(idx===-1) return;
+  roster[idx].name = newName;
+  await saveRoster(roster);
+
+  var data = await loadPlayerData(id);
+  if(data){
+    data.name = newName;
+    await savePlayerData(id, data);
+  }
+  renderPlayerManage();
+}
+
+async function deletePlayerFlow(id, name){
+  var removeConfirm = confirm('「'+name+'」を選手一覧から削除しますか?');
+  if(!removeConfirm) return;
+
+  var alsoDeleteData = confirm('過去の記録データも完全に削除しますか?\n\n「OK」: 記録データも完全に削除します(元に戻せません)\n「キャンセル」: 一覧からは消しますが、記録データはそのまま残します');
+
+  var roster = await loadRoster();
+  roster = roster.filter(function(p){ return p.id!==id; });
+  await saveRoster(roster);
+
+  if(alsoDeleteData){
+    await fsDeleteDoc('players', id);
+  }
+  renderPlayerManage();
 }
 
 function showPlayerDetail(id){
