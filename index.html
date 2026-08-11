@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RECOVERY COURT</title>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#152036">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RecoveryCourt">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="/firebase-config.js"></script>
+
+<style>
+  :root{
+    --wood:#C77D33; --wood-dark:#8F551C;
+    --navy:#152036; --navy-deep:#0C1322;
+    --line:#F2ECDD; --gold:#E7B23B;
+    --teal:#3D7C72; --teal-dark:#255049;
+    --red:#B33F3F; --red-dark:#7C2A2A;
+    --ink:#1B1712; --paper:#FBF8F1; --card:#FFFFFF;
+    --hairline: rgba(21,32,54,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'Noto Sans JP', sans-serif; line-height:1.7; -webkit-font-smoothing:antialiased;}
+  .app{max-width:680px;margin:0 auto;padding:0 0 4rem;}
+
+  .board{
+    background:var(--navy);
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 40px);
+    color:var(--line); padding:calc(env(safe-area-inset-top) + 1.4rem) 1.5rem 1.6rem;
+    border-bottom:6px solid var(--wood); position:relative; overflow:hidden;
+  }
+  .board::after{content:"";position:absolute; right:-40px; top:-40px; width:180px;height:180px;border-radius:50%; border:3px solid rgba(255,255,255,0.06);}
+  .eyebrow{font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.18em; color:var(--gold); margin:0 0 6px;}
+  h1.title{font-family:'Anton','Zen Kaku Gothic New',sans-serif; font-size:32px; letter-spacing:0.03em; margin:0 0 4px; line-height:1;}
+  .sub{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:500; font-size:13.5px; color:rgba(242,236,221,0.72); margin:0;}
+  .board-tag{position:absolute; top:calc(env(safe-area-inset-top) + 1rem); right:1.5rem; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gold); background:rgba(231,178,59,0.12); padding:4px 10px; border-radius:20px; border:1px solid rgba(231,178,59,0.4);}
+
+  .install-banner{display:none; align-items:center; justify-content:space-between; gap:10px; background:var(--gold); color:#412402; padding:10px 1.5rem; font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:12.5px;}
+  .install-banner.show{display:flex;}
+  .install-banner button{border:none; background:var(--navy); color:var(--gold); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:12px; padding:7px 12px; border-radius:8px; cursor:pointer;}
+
+  .screen{display:none; padding:1.6rem 1.5rem 0;}
+  .screen.active{display:block;}
+
+  .btn-primary{width:100%; border:none; background:var(--navy); color:var(--gold); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:16px; padding:15px; border-radius:10px; cursor:pointer; letter-spacing:0.03em;}
+  .btn-primary:active{transform:scale(0.99);}
+  .btn-secondary{width:100%; border:1px solid var(--hairline); background:var(--card); color:var(--ink); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px; padding:13px; border-radius:10px; cursor:pointer; margin-top:0.6rem;}
+  .btn-link{background:none;border:none;color:var(--wood-dark); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13px; cursor:pointer; padding:0.5rem 0;}
+
+  .role-grid{display:grid; grid-template-columns:1fr; gap:0.9rem; margin-top:1.6rem;}
+  .role-card{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:1.3rem 1.2rem; cursor:pointer; text-align:left; display:flex; gap:14px; align-items:center;}
+  .role-card:active{transform:scale(0.99);}
+  .role-badge{flex:0 0 auto; width:46px;height:46px;border-radius:50%; background:var(--navy); color:var(--gold); display:flex;align-items:center;justify-content:center; font-family:'Anton',sans-serif; font-size:16px;}
+  .role-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:900; font-size:16px; margin:0 0 3px;}
+  .role-desc{font-size:12.5px; color:#8A8574; margin:0;}
+
+  .field-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:1rem 1.1rem; margin-bottom:0.9rem;}
+  .field-label{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13.5px; margin:0 0 8px;}
+  select, input[type=text], input[type=password]{
+    width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--hairline);
+    font-family:'Noto Sans JP',sans-serif; font-size:14px; background:var(--paper); color:var(--ink);
+  }
+  .hint{font-size:11.5px; color:#8A8574; margin-top:6px;}
+  .divider-word{display:flex; align-items:center; gap:10px; margin:1rem 0; color:#B0AB99; font-size:11.5px;}
+  .divider-word::before,.divider-word::after{content:"";flex:1;height:1px;background:var(--hairline);}
+
+  .notice{font-size:12.5px; color:#8A8574; background:#F2ECDD; border-radius:8px; padding:10px 12px; margin-bottom:1rem;}
+  .error-notice{font-size:12.5px; color:var(--red-dark); background:#F7E1E1; border-radius:8px; padding:10px 12px; margin-bottom:1rem; display:none;}
+  .error-notice.show{display:block;}
+
+  .tabs{display:flex; gap:2px; background:var(--wood-dark); padding:2px;}
+  .tab{flex:1; border:none; background:var(--wood); color:var(--paper); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13.5px; padding:13px 6px; cursor:pointer;}
+  .tab.active{background:var(--navy); color:var(--gold);}
+  .tab .num{font-family:'JetBrains Mono',monospace; font-size:10.5px; opacity:0.7; margin-right:5px;}
+  .subpanel{display:none;}
+  .subpanel.active{display:block;}
+
+  .top-bar{display:flex; justify-content:space-between; align-items:center; padding:1rem 1.5rem 0;}
+  .top-bar .who{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px;}
+  .top-bar .who span{color:var(--wood-dark);}
+
+  .q-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:1rem 1.1rem 1.15rem; margin-bottom:0.9rem;}
+  .q-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.55rem;}
+  .q-label{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14.5px;}
+  .q-val{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--wood-dark); font-weight:600;}
+  .q-scale{display:flex; justify-content:space-between; font-size:11px; color:#8A8574; margin-top:4px;}
+  input[type=range]{-webkit-appearance:none; width:100%; height:6px; border-radius:3px; background:linear-gradient(90deg, var(--teal), var(--gold) 50%, var(--red)); outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:20px;height:20px;border-radius:50%; background:var(--navy); border:3px solid var(--paper); cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%; background:var(--navy); border:3px solid var(--paper); cursor:pointer;}
+
+  .gauge-wrap{display:flex; align-items:center; gap:1.3rem; background:var(--navy); border-radius:12px; padding:1.3rem 1.2rem; margin-bottom:1rem;}
+  .gauge-text{color:var(--line);}
+  .gauge-eyebrow{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; color:rgba(242,236,221,0.6); margin:0 0 2px;}
+  .gauge-level{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:900; font-size:24px; margin:0 0 2px; line-height:1.1;}
+  .gauge-note{font-size:12.5px; color:rgba(242,236,221,0.75); margin:0;}
+
+  .stat-row{display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1rem;}
+  .stat-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.85rem 1rem;}
+  .stat-label{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#8A8574; letter-spacing:0.06em; margin:0 0 2px;}
+  .stat-num{font-family:'Anton',sans-serif; font-size:24px; color:var(--wood-dark); line-height:1;}
+  .stat-num span{font-family:'Zen Kaku Gothic New',sans-serif; font-size:13px; font-weight:700; margin-left:2px;}
+
+  .advice-card{background:var(--card); border:1px solid var(--hairline); border-left:4px solid var(--teal); border-radius:0 10px 10px 0; padding:1rem 1.1rem; margin-bottom:1rem;}
+  .advice-card.mid{border-left-color:var(--gold);}
+  .advice-card.high{border-left-color:var(--red);}
+  .advice-title{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14.5px; margin:0 0 6px;}
+  .advice-body{font-size:13.5px; color:#3A362D; margin:0;}
+  .light-menu{margin:0;padding:0;list-style:none;}
+  .light-menu li{font-size:13.5px; padding:6px 0; border-bottom:1px dashed var(--hairline); display:flex; gap:8px;}
+  .light-menu li:last-child{border-bottom:none;}
+  .light-menu li::before{content:"・"; color:var(--wood-dark); font-weight:700;}
+
+  .sent-note{display:flex; align-items:center; gap:8px; background:#EAF1EC; color:var(--teal-dark); border-radius:8px; padding:10px 12px; font-size:12.5px; font-weight:700; margin-bottom:1rem;}
+
+  .goal-intro{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:15px; margin:0 0 0.9rem;}
+  .goal-grid{display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1.4rem;}
+  .goal-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.9rem 0.8rem; cursor:pointer; text-align:left;}
+  .goal-card.selected{border-color:var(--wood); background:#FBF1E5;}
+  .goal-icon{font-family:'Anton',sans-serif; font-size:18px; color:var(--wood-dark); margin-bottom:4px;}
+  .goal-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13.5px; margin:0 0 2px;}
+  .goal-desc{font-size:11.5px; color:#8A8574; margin:0; line-height:1.4;}
+  .menu-header{display:flex; align-items:center; gap:10px; margin-bottom:0.8rem; padding-bottom:0.6rem; border-bottom:2px solid var(--navy);}
+  .menu-header .jersey{font-family:'Anton',sans-serif; font-size:20px; color:var(--wood-dark);}
+  .menu-header .m-title{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:900; font-size:16px;}
+  .ex-card{display:flex; gap:0.9rem; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.85rem 1rem; margin-bottom:0.6rem; align-items:flex-start;}
+  .ex-num{flex:0 0 auto; width:32px; height:32px; border-radius:50%; background:var(--navy); color:var(--gold); font-family:'Anton',sans-serif; font-size:13px; display:flex; align-items:center; justify-content:center;}
+  .ex-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13.5px; margin:0 0 3px;}
+  .ex-sets{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--wood-dark); margin:0 0 3px;}
+  .ex-tip{font-size:12px; color:#7A7566; margin:0;}
+  .menu-note{font-size:11.5px; color:#8A8574; margin-top:0.9rem; padding-top:0.8rem; border-top:1px dashed var(--hairline);}
+  .placeholder{text-align:center; color:#B0AB99; font-size:13px; padding:2rem 0;}
+
+  .coach-stats{display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.6rem; margin-bottom:1.2rem;}
+  .coach-stats .stat-card{padding:0.75rem 0.6rem;}
+  .coach-stats .stat-num{font-size:20px;}
+  .team-advice{background:var(--navy); color:var(--line); border-radius:10px; padding:1rem 1.1rem; margin-bottom:1.2rem;}
+  .team-advice .advice-title{color:var(--gold); margin:0 0 6px;}
+  .team-advice p.advice-body{color:rgba(242,236,221,0.85);}
+  .roster-list{list-style:none; margin:0; padding:0;}
+  .roster-row{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.8rem 1rem; margin-bottom:0.55rem; cursor:pointer;}
+  .roster-row:active{transform:scale(0.99);}
+  .status-dot{flex:0 0 auto; width:12px;height:12px;border-radius:50%;}
+  .status-dot.low{background:var(--teal);}
+  .status-dot.mid{background:var(--gold);}
+  .status-dot.high{background:var(--red);}
+  .status-dot.none{background:#D8D3C4;}
+  .roster-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14.5px; flex:1;}
+  .badge-level{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:11px; padding:3px 9px; border-radius:20px;}
+  .badge-level.low{background:#E1F0EC; color:var(--teal-dark);}
+  .badge-level.mid{background:#FAF0D8; color:#8F6A17;}
+  .badge-level.high{background:#F7E1E1; color:var(--red-dark);}
+  .badge-level.none{background:#EFECE2; color:#8A8574;}
+
+  .history-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed var(--hairline);}
+  .history-row:last-child{border-bottom:none;}
+  .history-date{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#8A8574; width:78px; flex:0 0 auto;}
+  .history-bar-track{flex:1; height:8px; background:#EFEAE0; border-radius:4px; overflow:hidden;}
+  .history-bar-fill{height:100%; border-radius:4px;}
+  .history-score{font-family:'JetBrains Mono',monospace; font-size:11.5px; width:26px; text-align:right; flex:0 0 auto;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="board">
+    <span class="board-tag" id="whoTag">CONDITIONING ASSISTANT</span>
+    <p class="eyebrow">CONDITIONING ASSISTANT</p>
+    <h1 class="title">RECOVERY COURT</h1>
+    <p class="sub" id="boardSub">バスケ選手のための休息 &amp; 宅トレナビ</p>
+  </div>
+
+  <div class="install-banner" id="installBanner">
+    <span>ホーム画面に追加してアプリのように使えます</span>
+    <button onclick="triggerInstall()">追加</button>
+  </div>
+
+  <div class="screen active" id="screenRole">
+    <div class="error-notice" id="connError">クラウドに接続できません。firebase-config.js の設定が正しいか確認してください。</div>
+    <div class="notice">選手はコンディションを記録、監督/トレーナーはチーム全体の状態を確認できます。選手の回答データは監督/トレーナーの画面(PIN保護)からのみ閲覧できます。</div>
+    <div class="role-grid">
+      <div class="role-card" onclick="goPlayerSetup()">
+        <div class="role-badge">P</div>
+        <div><p class="role-name">選手として記録する</p><p class="role-desc">今日のコンディションをチェックイン</p></div>
+      </div>
+      <div class="role-card" onclick="goCoachPin()">
+        <div class="role-badge">C</div>
+        <div><p class="role-name">監督/トレーナーとして見る</p><p class="role-desc">チームの状態を確認(PIN必要)</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screenPlayerSetup">
+    <div class="field-card">
+      <p class="field-label">名前を選ぶ</p>
+      <select id="rosterSelect" onchange="onRosterSelectChange()">
+        <option value="">-- 登録済みの選手を選択 --</option>
+      </select>
+    </div>
+    <div class="divider-word">または</div>
+    <div class="field-card">
+      <p class="field-label">新しい選手として登録</p>
+      <input type="text" id="newPlayerName" placeholder="例: 山田 太郎">
+      <p class="hint">初めて使う場合はここに名前を入力してください</p>
+    </div>
+    <button class="btn-primary" onclick="startPlayerSession()">この名前で始める</button>
+    <button class="btn-secondary" onclick="showScreen('screenRole')">戻る</button>
+  </div>
+
+  <div class="screen" id="screenPlayerApp">
+    <div class="top-bar">
+      <p class="who">選手: <span id="currentPlayerLabel">-</span></p>
+      <button class="btn-link" onclick="logoutPlayer()">切り替え</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" id="pTabBtn1" onclick="switchPlayerTab(1)"><span class="num">01</span>コンディションチェック</button>
+      <button class="tab" id="pTabBtn2" onclick="switchPlayerTab(2)"><span class="num">02</span>宅トレメニュー</button>
+    </div>
+
+    <div class="subpanel active" id="pPanel1" style="padding:1.6rem 1.5rem 0;">
+      <div class="q-card">
+        <div class="q-head"><span class="q-label">睡眠の質(昨夜)</span><span class="q-val" id="v1">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" id="q1" oninput="updateVal(1)">
+        <div class="q-scale"><span>ぐっすり眠れた</span><span>ほとんど眠れず</span></div>
+      </div>
+      <div class="q-card">
+        <div class="q-head"><span class="q-label">筋肉の張り・痛み</span><span class="q-val" id="v2">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" id="q2" oninput="updateVal(2)">
+        <div class="q-scale"><span>なし</span><span>強い痛み</span></div>
+      </div>
+      <div class="q-card">
+        <div class="q-head"><span class="q-label">直近の練習・試合強度</span><span class="q-val" id="v3">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" id="q3" oninput="updateVal(3)">
+        <div class="q-scale"><span>軽め</span><span>非常に激しい</span></div>
+      </div>
+      <div class="q-card">
+        <div class="q-head"><span class="q-label">だるさ・やる気の低下</span><span class="q-val" id="v4">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" id="q4" oninput="updateVal(4)">
+        <div class="q-scale"><span>なし</span><span>強く感じる</span></div>
+      </div>
+      <div class="q-card">
+        <div class="q-head"><span class="q-label">激しい練習/試合からの経過日数</span><span class="q-val" id="v5">3</span></div>
+        <input type="range" min="1" max="5" value="3" step="1" id="q5" oninput="updateVal(5)">
+        <div class="q-scale"><span>3日以上前</span><span>今日/昨日</span></div>
+      </div>
+      <button class="btn-primary" onclick="diagnose()" id="diagnoseBtn">診断して監督に送信</button>
+
+      <div id="result" style="display:none; margin-top:1.6rem;">
+        <div class="sent-note"><span>送信済み: この結果は監督/トレーナーのみ閲覧できます</span></div>
+        <div class="gauge-wrap">
+          <svg width="88" height="88" viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="9"/>
+            <circle id="gaugeArc" cx="44" cy="44" r="36" fill="none" stroke="#E7B23B" stroke-width="9" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226" transform="rotate(-90 44 44)"/>
+            <text id="gaugeScore" x="44" y="49" text-anchor="middle" font-family="Anton" font-size="22" fill="#F2ECDD">--</text>
+          </svg>
+          <div class="gauge-text">
+            <p class="gauge-eyebrow">FATIGUE LEVEL</p>
+            <p class="gauge-level" id="levelText">-</p>
+            <p class="gauge-note" id="levelNote">-</p>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-card"><p class="stat-label">推奨睡眠時間</p><p class="stat-num" id="sleepHours">--<span>時間</span></p></div>
+          <div class="stat-card"><p class="stat-label">今日の推奨強度</p><p class="stat-num" id="intensityText" style="font-size:17px;">--</p></div>
+        </div>
+        <div class="advice-card" id="adviceCard">
+          <p class="advice-title" id="adviceTitle">過ごし方のアドバイス</p>
+          <p class="advice-body" id="adviceBody">-</p>
+        </div>
+        <div class="advice-card" style="border-left-color:var(--teal);">
+          <p class="advice-title">おすすめの軽い運動</p>
+          <ul class="light-menu" id="lightList"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="pPanel2" style="padding:1.6rem 1.5rem 0;">
+      <p class="goal-intro">伸ばしたい項目を選んでください</p>
+      <div class="goal-grid" id="goalGrid"></div>
+      <div id="menuArea"><p class="placeholder">項目を選ぶとメニューが表示されます</p></div>
+    </div>
+  </div>
+
+  <div class="screen" id="screenCoachPin">
+    <div class="field-card">
+      <p class="field-label" id="pinLabel">PINを入力してください</p>
+      <input type="password" id="pinInput" placeholder="4桁のPIN" inputmode="numeric" maxlength="8">
+      <p class="hint" id="pinHint">初めての場合はここで新しいPINを設定します(次回以降このPINが必要です)。</p>
+    </div>
+    <button class="btn-primary" onclick="submitPin()">確認</button>
+    <button class="btn-secondary" onclick="showScreen('screenRole')">戻る</button>
+    <p class="hint" style="margin-top:1rem;">※ このPINは同じチームの端末間で共有される簡易的なロックです。厳密なアカウント認証ではないため、完全な機密情報の保護には利用しないでください。</p>
+  </div>
+
+  <div class="screen" id="screenCoachDash">
+    <div class="top-bar" style="padding:0 0 1rem;">
+      <p class="who">監督ダッシュボード</p>
+      <button class="btn-link" onclick="logoutCoach()">ロック</button>
+    </div>
+    <div class="coach-stats" id="coachStats"></div>
+    <div class="team-advice" id="teamAdvice"></div>
+    <p class="goal-intro" style="margin-bottom:0.6rem;">選手一覧(今日の状態)</p>
+    <ul class="roster-list" id="rosterList"></ul>
+  </div>
+
+  <div class="screen" id="screenCoachDetail">
+    <div class="top-bar" style="padding:0 0 1rem;">
+      <p class="who" id="detailName">選手名</p>
+      <button class="btn-link" onclick="showScreen('screenCoachDash'); renderDashboard();">一覧に戻る</button>
+    </div>
+    <div id="detailLatest"></div>
+    <p class="goal-intro" style="margin:1rem 0 0.6rem;">最近の記録</p>
+    <div id="detailHistory"></div>
+  </div>
+
+</div>
+
+<script>
+/* ---------------- PWA: service worker + install prompt ---------------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/service-worker.js').catch(function(){});
+  });
+}
+var deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+function triggerInstall(){
+  if(!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.finally(function(){
+    deferredInstallPrompt = null;
+    document.getElementById('installBanner').classList.remove('show');
+  });
+}
+window.addEventListener('appinstalled', function(){
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+/* ---------------- cloud storage (Firestore) ---------------- */
+async function fsGetDoc(collection, id){
+  try{
+    var snap = await db.collection(collection).doc(id).get();
+    return snap.exists ? snap.data() : null;
+  }catch(e){
+    document.getElementById('connError').classList.add('show');
+    return null;
+  }
+}
+async function fsSetDoc(collection, id, data){
+  try{
+    await db.collection(collection).doc(id).set(data);
+    return true;
+  }catch(e){
+    document.getElementById('connError').classList.add('show');
+    return false;
+  }
+}
+
+async function loadRoster(){
+  var doc = await fsGetDoc('meta', 'roster');
+  return (doc && doc.list) ? doc.list : [];
+}
+async function saveRoster(list){
+  await fsSetDoc('meta', 'roster', {list:list});
+}
+function slugify(name){
+  return 'p_' + name.trim().replace(/\s+/g,'').replace(/[^a-zA-Z0-9ぁ-んァ-ヶ一-龠]/g,'') + '_' + Math.random().toString(36).slice(2,6);
+}
+async function loadPlayerData(id){
+  return await fsGetDoc('players', id);
+}
+async function savePlayerData(id, data){
+  await fsSetDoc('players', id, data);
+}
+async function getCoachPin(){
+  var doc = await fsGetDoc('meta', 'coach');
+  return doc ? doc.pin : null;
+}
+async function setCoachPinRemote(pin){
+  await fsSetDoc('meta', 'coach', {pin:pin});
+}
+
+/* ---------------- screens ---------------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+async function goPlayerSetup(){
+  document.getElementById('whoTag').textContent = 'PLAYER MODE';
+  document.getElementById('boardSub').textContent = '今日のコンディションを記録しよう';
+  var roster = await loadRoster();
+  var sel = document.getElementById('rosterSelect');
+  sel.innerHTML = '<option value="">-- 登録済みの選手を選択 --</option>';
+  roster.forEach(function(p){
+    var opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+  showScreen('screenPlayerSetup');
+}
+function onRosterSelectChange(){
+  var sel = document.getElementById('rosterSelect');
+  if(sel.value){ document.getElementById('newPlayerName').value = ''; }
+}
+var currentPlayer = null;
+async function startPlayerSession(){
+  var sel = document.getElementById('rosterSelect');
+  var newName = document.getElementById('newPlayerName').value.trim();
+  if(sel.value){
+    var roster = await loadRoster();
+    var found = roster.find(function(p){ return p.id===sel.value; });
+    if(found){ currentPlayer = found; }
+  } else if(newName){
+    var id = slugify(newName);
+    currentPlayer = {id:id, name:newName};
+    var roster2 = await loadRoster();
+    roster2.push(currentPlayer);
+    await saveRoster(roster2);
+  } else {
+    alert('選手を選択するか、新しい名前を入力してください。');
+    return;
+  }
+  document.getElementById('currentPlayerLabel').textContent = currentPlayer.name;
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('whoTag').textContent = 'PLAYER MODE';
+  renderGoalGrid();
+  showScreen('screenPlayerApp');
+}
+function logoutPlayer(){
+  currentPlayer = null;
+  showScreen('screenRole');
+  document.getElementById('whoTag').textContent = 'CONDITIONING ASSISTANT';
+  document.getElementById('boardSub').textContent = 'バスケ選手のための休息 & 宅トレナビ';
+}
+function switchPlayerTab(n){
+  document.getElementById('pPanel1').classList.toggle('active', n===1);
+  document.getElementById('pPanel2').classList.toggle('active', n===2);
+  document.getElementById('pTabBtn1').classList.toggle('active', n===1);
+  document.getElementById('pTabBtn2').classList.toggle('active', n===2);
+}
+function updateVal(i){
+  document.getElementById('v'+i).textContent = document.getElementById('q'+i).value;
+}
+
+/* ---------------- fatigue calc ---------------- */
+function computeFatigue(total){
+  var out = {};
+  if(total <= 11){
+    out = {level:'低 (絶好調)', note:'コンディション良好', color:'#3D7C72', levelKey:'low',
+      sleepMin:7, sleepMax:8, intensity:'通常通り',
+      adviceTitle:'通常メニューで問題なし',
+      adviceBody:'疲労は軽度です。普段通りの練習強度で問題ありません。ウォームアップとクールダウンは丁寧に行い、疲労を溜めないようにしましょう。',
+      lightItems:['練習前後の動的ストレッチ 5分','軽いジョギング(ウォームアップ) 5分','練習後のクールダウン+静的ストレッチ 10分'],
+      cardClass:''};
+  } else if(total <= 17){
+    out = {level:'中 (要注意)', note:'疲労が蓄積ぎみ', color:'#E7B23B', levelKey:'mid',
+      sleepMin:8, sleepMax:9, intensity:'70%程度に調整',
+      adviceTitle:'アクティブレストを推奨',
+      adviceBody:'疲労が蓄積してきています。今日は練習強度を普段の7割程度に落とし、軽い有酸素運動とストレッチで血流を促す「アクティブレスト」を取り入れましょう。無理な追い込みは避けてください。',
+      lightItems:['ウォーキング 15〜20分','軽めのジョギング(息が上がらない程度) 10分','フォームローラー・ストレッチ 10分','入浴で身体を温める'],
+      cardClass:'mid'};
+  } else {
+    out = {level:'高 (要休養)', note:'オーバーワーク注意', color:'#B33F3F', levelKey:'high',
+      sleepMin:9, sleepMax:10, intensity:'完全休養推奨',
+      adviceTitle:'今日は完全休養を',
+      adviceBody:'疲労度がかなり高い状態です。ケガのリスクが上がるため、今日はコートに立つ練習は控え、完全休養を優先してください。睡眠時間を増やし、必要であれば20分程度の昼寝も有効です。',
+      lightItems:['軽いストレッチのみ(痛みが出ない範囲で)','ぬるめのお風呂でリラックス','水分・タンパク質をしっかり補給','スマホ・PCの使用を控えて早めに就寝'],
+      cardClass:'high'};
+  }
+  out.total = total;
+  return out;
+}
+
+async function diagnose(){
+  var scores = [];
+  for(var i=1;i<=5;i++){ scores.push(parseInt(document.getElementById('q'+i).value,10)); }
+  var total = scores.reduce(function(a,b){return a+b;},0);
+  var res = computeFatigue(total);
+  var pct = (total-5)/20;
+  var circumference = 2*Math.PI*36;
+  var offset = circumference*(1-pct);
+
+  var arc = document.getElementById('gaugeArc');
+  arc.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  arc.setAttribute('stroke', res.color);
+  document.getElementById('gaugeScore').textContent = total;
+  document.getElementById('levelText').textContent = res.level;
+  document.getElementById('levelNote').textContent = res.note;
+  document.getElementById('sleepHours').innerHTML = res.sleepMin+"〜"+res.sleepMax+"<span>時間</span>";
+  document.getElementById('intensityText').textContent = res.intensity;
+
+  var adviceCard = document.getElementById('adviceCard');
+  adviceCard.className = 'advice-card' + (res.cardClass ? ' '+res.cardClass : '');
+  document.getElementById('adviceTitle').textContent = res.adviceTitle;
+  document.getElementById('adviceBody').textContent = res.adviceBody;
+
+  var list = document.getElementById('lightList');
+  list.innerHTML = '';
+  res.lightItems.forEach(function(t){
+    var li = document.createElement('li'); li.textContent = t; list.appendChild(li);
+  });
+  document.getElementById('result').style.display = 'block';
+
+  var btn = document.getElementById('diagnoseBtn');
+  btn.disabled = true; btn.textContent = '送信中...';
+
+  var today = new Date();
+  var dateStr = today.toISOString().slice(0,10);
+  var record = {date:dateStr, ts:Date.now(), scores:scores, total:total, levelKey:res.levelKey, level:res.level};
+
+  var data = await loadPlayerData(currentPlayer.id);
+  if(!data){ data = {name:currentPlayer.name, history:[]}; }
+  data.name = currentPlayer.name;
+  data.history.push(record);
+  if(data.history.length > 30){ data.history = data.history.slice(-30); }
+  await savePlayerData(currentPlayer.id, data);
+
+  btn.disabled = false; btn.textContent = '診断して監督に送信';
+}
+
+/* ---------------- home training menu ---------------- */
+var goals = [
+  {id:'jump', icon:'01', name:'ジャンプ力', desc:'跳躍力・爆発力',
+    exercises:[
+      {name:'スクワットジャンプ', sets:'10回 × 3セット', tip:'着地は静かに、膝を柔らかく使う'},
+      {name:'カーフレイズ', sets:'20回 × 3セット', tip:'ふくらはぎをしっかり伸縮させる'},
+      {name:'ブロードジャンプ(立ち幅跳び)', sets:'5回 × 3セット', tip:'毎回全力で遠くへ跳ぶ意識'},
+      {name:'縄跳び', sets:'1分 × 3セット', tip:'リズムよく、つま先で着地'}]},
+  {id:'speed', icon:'02', name:'スピード/クイックネス', desc:'瞬発力・切り返し',
+    exercises:[
+      {name:'その場もも上げ', sets:'20秒 × 4セット', tip:'できるだけ速いピッチで'},
+      {name:'サイドシャッフル', sets:'20秒 × 4セット', tip:'腰を落として重心を低く'},
+      {name:'バーピー', sets:'8回 × 3セット', tip:'一連の動作を素早く連続で'},
+      {name:'反復横跳び', sets:'20秒 × 3セット', tip:'切り返しのタイミングを意識'}]},
+  {id:'core', icon:'03', name:'体幹・バランス', desc:'軸の安定・接触に強く',
+    exercises:[
+      {name:'プランク', sets:'30秒 × 3セット', tip:'腰が反らないよう一直線をキープ'},
+      {name:'サイドプランク', sets:'20秒 × 左右3セット', tip:'肩からかかとまで一直線に'},
+      {name:'片脚バランス', sets:'30秒 × 左右3セット', tip:'目線は一点を見つめて安定させる'},
+      {name:'デッドバグ', sets:'10回 × 3セット', tip:'腰を床から離さないように'}]},
+  {id:'shoot', icon:'04', name:'シュートの土台づくり', desc:'下半身の安定とリリース',
+    exercises:[
+      {name:'ウォールシット', sets:'30秒 × 3セット', tip:'太ももが床と平行になる高さで'},
+      {name:'片脚カーフレイズ', sets:'15回 × 左右3セット', tip:'ふらつかないようゆっくり'},
+      {name:'シャドーシュート(フォーム確認)', sets:'20回 × 3セット', tip:'鏡やスマホでフォームをチェック'},
+      {name:'リストカール(ペットボトルなど軽負荷)', sets:'15回 × 3セット', tip:'手首のスナップを意識'}]},
+  {id:'endurance', icon:'05', name:'持久力・スタミナ', desc:'4Q走りきる体力',
+    exercises:[
+      {name:'その場もも上げ', sets:'1分 × 4セット', tip:'呼吸を止めずリズムよく'},
+      {name:'マウンテンクライマー', sets:'30秒 × 4セット', tip:'体幹を安定させたまま素早く'},
+      {name:'スクワット', sets:'20回 × 4セット', tip:'膝がつま先より前に出過ぎないように'},
+      {name:'階段・踏み台昇降', sets:'2分 × 3セット', tip:'一定のペースを保つ'}]},
+  {id:'flex', icon:'06', name:'柔軟性・怪我予防', desc:'可動域アップとケア',
+    exercises:[
+      {name:'股関節ストレッチ(ハト・バタフライ)', sets:'各30秒', tip:'呼吸を深く、反動をつけない'},
+      {name:'ハムストリングストレッチ', sets:'30秒 × 左右', tip:'膝を伸ばしすぎず心地よい範囲で'},
+      {name:'足首まわし', sets:'10回 × 左右', tip:'大きくゆっくり回す'},
+      {name:'肩甲骨ストレッチ(タオル使用)', sets:'10回', tip:'肩をすくめず大きく動かす'}]}
+];
+var selectedGoal = null;
+function renderGoalGrid(){
+  var grid = document.getElementById('goalGrid');
+  grid.innerHTML = '';
+  goals.forEach(function(g){
+    var card = document.createElement('div');
+    card.className = 'goal-card' + (selectedGoal===g.id ? ' selected' : '');
+    card.onclick = function(){ selectGoal(g.id); };
+    card.innerHTML = '<div class="goal-icon">'+g.icon+'</div><p class="goal-name">'+g.name+'</p><p class="goal-desc">'+g.desc+'</p>';
+    grid.appendChild(card);
+  });
+}
+function selectGoal(id){
+  selectedGoal = id;
+  renderGoalGrid();
+  var g = goals.find(function(x){ return x.id===id; });
+  var area = document.getElementById('menuArea');
+  var html = '<div class="menu-header"><span class="jersey">'+g.icon+'</span><span class="m-title">'+g.name+'メニュー</span></div>';
+  g.exercises.forEach(function(ex, idx){
+    html += '<div class="ex-card"><div class="ex-num">'+(idx+1)+'</div><div><p class="ex-name">'+ex.name+'</p><p class="ex-sets">'+ex.sets+'</p><p class="ex-tip">'+ex.tip+'</p></div></div>';
+  });
+  html += '<p class="menu-note">器具不要・自宅でできるメニューです。フォームを優先し、痛みが出た場合は中止してください。</p>';
+  area.innerHTML = html;
+}
+
+/* ---------------- coach: pin gate ---------------- */
+var pendingIsSetup = false;
+async function goCoachPin(){
+  document.getElementById('whoTag').textContent = 'COACH MODE';
+  document.getElementById('boardSub').textContent = 'チームのコンディションを確認';
+  var pin = await getCoachPin();
+  document.getElementById('pinInput').value = '';
+  if(pin){
+    pendingIsSetup = false;
+    document.getElementById('pinLabel').textContent = 'PINを入力してください';
+    document.getElementById('pinHint').textContent = 'チームで共有しているPINを入力してください。';
+  } else {
+    pendingIsSetup = true;
+    document.getElementById('pinLabel').textContent = '新しいPINを設定してください';
+    document.getElementById('pinHint').textContent = '初めての設定です。ここで決めたPINは以後、監督/トレーナー画面に入るたびに必要になります。';
+  }
+  showScreen('screenCoachPin');
+}
+async function submitPin(){
+  var val = document.getElementById('pinInput').value.trim();
+  if(!val){ alert('PINを入力してください。'); return; }
+  if(pendingIsSetup){
+    await setCoachPinRemote(val);
+    showScreen('screenCoachDash');
+    renderDashboard();
+  } else {
+    var pin = await getCoachPin();
+    if(val === pin){
+      showScreen('screenCoachDash');
+      renderDashboard();
+    } else {
+      alert('PINが違います。');
+    }
+  }
+}
+function logoutCoach(){
+  showScreen('screenRole');
+  document.getElementById('whoTag').textContent = 'CONDITIONING ASSISTANT';
+  document.getElementById('boardSub').textContent = 'バスケ選手のための休息 & 宅トレナビ';
+}
+
+/* ---------------- coach: dashboard ---------------- */
+var lastLoadedPlayers = [];
+async function renderDashboard(){
+  document.getElementById('rosterList').innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var roster = await loadRoster();
+  var todayStr = new Date().toISOString().slice(0,10);
+  var players = [];
+  for(var i=0;i<roster.length;i++){
+    var d = await loadPlayerData(roster[i].id);
+    var latest = null;
+    if(d && d.history && d.history.length){ latest = d.history[d.history.length-1]; }
+    players.push({id:roster[i].id, name:roster[i].name, data:d, latest:latest,
+      isToday: latest ? latest.date===todayStr : false});
+  }
+  lastLoadedPlayers = players;
+
+  var checkedInToday = players.filter(function(p){ return p.isToday; });
+  var avgTotal = checkedInToday.length ? (checkedInToday.reduce(function(s,p){return s+p.latest.total;},0)/checkedInToday.length) : null;
+  var highCount = checkedInToday.filter(function(p){ return p.latest.levelKey==='high'; }).length;
+
+  var statsEl = document.getElementById('coachStats');
+  statsEl.innerHTML =
+    '<div class="stat-card"><p class="stat-label">本日回答</p><p class="stat-num">'+checkedInToday.length+'<span>/'+players.length+'人</span></p></div>' +
+    '<div class="stat-card"><p class="stat-label">平均疲労スコア</p><p class="stat-num">'+(avgTotal!==null ? avgTotal.toFixed(1) : '--')+'</p></div>' +
+    '<div class="stat-card"><p class="stat-label">要注意(高)人数</p><p class="stat-num">'+highCount+'<span>人</span></p></div>';
+
+  var adviceEl = document.getElementById('teamAdvice');
+  var title, body;
+  if(checkedInToday.length===0){
+    title = 'まだ本日の回答がありません';
+    body = '選手にコンディションチェックの入力を促してください。';
+  } else if(avgTotal > 17 || highCount >= Math.ceil(players.length/3)){
+    title = 'チーム全体の疲労度が高めです';
+    body = '要注意・要休養の選手が多くなっています。今日の全体練習は強度を落とし、個別に休養を優先する選手を確認してください。';
+  } else if(avgTotal > 11){
+    title = 'やや疲労が蓄積しています';
+    body = 'チーム平均は中程度の疲労です。アップ・ダウンを丁寧に行い、負荷の高いメニューは調整を検討してください。';
+  } else {
+    title = 'チームのコンディションは良好です';
+    body = '通常通りの強度で練習を行って問題ない状態です。';
+  }
+  adviceEl.innerHTML = '<p class="advice-title">'+title+'</p><p class="advice-body">'+body+'</p>';
+
+  var listEl = document.getElementById('rosterList');
+  if(players.length===0){
+    listEl.innerHTML = '<p class="placeholder">まだ登録された選手がいません</p>';
+    return;
+  }
+  listEl.innerHTML = '';
+  players.forEach(function(p){
+    var dotClass = 'none', badgeText = '未回答';
+    if(p.isToday){ dotClass = p.latest.levelKey; badgeText = p.latest.level; }
+    else if(p.latest){ dotClass = 'none'; badgeText = '直近:'+p.latest.date; }
+    var row = document.createElement('li');
+    row.className = 'roster-row';
+    row.onclick = function(){ showPlayerDetail(p.id); };
+    row.innerHTML =
+      '<span class="status-dot '+dotClass+'"></span>' +
+      '<span class="roster-name">'+p.name+'</span>' +
+      '<span class="badge-level '+ (p.isToday?p.latest.levelKey:'none') +'">'+badgeText+'</span>';
+    listEl.appendChild(row);
+  });
+}
+
+function showPlayerDetail(id){
+  var p = lastLoadedPlayers.find(function(x){ return x.id===id; });
+  if(!p) return;
+  document.getElementById('detailName').textContent = p.name;
+  var latestEl = document.getElementById('detailLatest');
+  if(p.latest){
+    var res = computeFatigue(p.latest.total);
+    latestEl.innerHTML =
+      '<div class="stat-row">' +
+      '<div class="stat-card"><p class="stat-label">直近スコア('+p.latest.date+')</p><p class="stat-num">'+p.latest.total+'<span>/25</span></p></div>' +
+      '<div class="stat-card"><p class="stat-label">レベル</p><p class="stat-num" style="font-size:16px;">'+p.latest.level+'</p></div>' +
+      '</div>' +
+      '<div class="advice-card '+res.cardClass+'"><p class="advice-title">推奨対応</p><p class="advice-body">'+res.adviceBody+'</p></div>';
+  } else {
+    latestEl.innerHTML = '<p class="placeholder">まだ記録がありません</p>';
+  }
+
+  var histEl = document.getElementById('detailHistory');
+  if(p.data && p.data.history && p.data.history.length){
+    var rows = p.data.history.slice().reverse().slice(0,14);
+    var html = '';
+    rows.forEach(function(r){
+      var colorMap = {low:'#3D7C72', mid:'#E7B23B', high:'#B33F3F'};
+      var widthPct = Math.round((r.total/25)*100);
+      html += '<div class="history-row">' +
+        '<span class="history-date">'+r.date+'</span>' +
+        '<span class="history-bar-track"><span class="history-bar-fill" style="width:'+widthPct+'%; background:'+colorMap[r.levelKey]+';"></span></span>' +
+        '<span class="history-score">'+r.total+'</span>' +
+        '</div>';
+    });
+    histEl.innerHTML = html;
+  } else {
+    histEl.innerHTML = '<p class="placeholder">記録がありません</p>';
+  }
+  showScreen('screenCoachDetail');
+}
+</script>
+</body>
+</html>
