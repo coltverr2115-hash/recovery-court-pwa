@@ -1,4 +1,4 @@
-var CACHE_NAME = 'recovery-court-v1';
+var CACHE_NAME = 'recovery-court-v2';
 var SHELL_FILES = [
   '/',
   '/index.html',

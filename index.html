@@ -18,9 +18,11 @@
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="/firebase-config.js"></script>
 
 <style>
+
   :root{
     --wood:#C77D33; --wood-dark:#8F551C;
     --navy:#152036; --navy-deep:#0C1322;
@@ -51,11 +53,14 @@
   .install-banner.show{display:flex;}
   .install-banner button{border:none; background:var(--navy); color:var(--gold); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:12px; padding:7px 12px; border-radius:8px; cursor:pointer;}
 
+  .capacity-banner{display:none; background:#F7E1E1; color:var(--red-dark); font-size:12px; font-weight:700; padding:10px 1.5rem;}
+
   .screen{display:none; padding:1.6rem 1.5rem 0;}
   .screen.active{display:block;}
 
   .btn-primary{width:100%; border:none; background:var(--navy); color:var(--gold); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:16px; padding:15px; border-radius:10px; cursor:pointer; letter-spacing:0.03em;}
   .btn-primary:active{transform:scale(0.99);}
+  .btn-primary:disabled{opacity:0.6;}
   .btn-secondary{width:100%; border:1px solid var(--hairline); background:var(--card); color:var(--ink); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px; padding:13px; border-radius:10px; cursor:pointer; margin-top:0.6rem;}
   .btn-link{background:none;border:none;color:var(--wood-dark); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13px; cursor:pointer; padding:0.5rem 0;}
 
@@ -68,10 +73,12 @@
 
   .field-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:1rem 1.1rem; margin-bottom:0.9rem;}
   .field-label{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13.5px; margin:0 0 8px;}
-  select, input[type=text], input[type=password]{
+  select, input[type=text], input[type=password], input[type=number], input[type=date], textarea{
     width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--hairline);
     font-family:'Noto Sans JP',sans-serif; font-size:14px; background:var(--paper); color:var(--ink);
   }
+  textarea{resize:vertical; font-family:'Noto Sans JP',sans-serif;}
+  input[type=date]{font-family:'JetBrains Mono',monospace; font-size:12px; padding:8px 10px;}
   .hint{font-size:11.5px; color:#8A8574; margin-top:6px;}
   .divider-word{display:flex; align-items:center; gap:10px; margin:1rem 0; color:#B0AB99; font-size:11.5px;}
   .divider-word::before,.divider-word::after{content:"";flex:1;height:1px;background:var(--hairline);}
@@ -80,10 +87,10 @@
   .error-notice{font-size:12.5px; color:var(--red-dark); background:#F7E1E1; border-radius:8px; padding:10px 12px; margin-bottom:1rem; display:none;}
   .error-notice.show{display:block;}
 
-  .tabs{display:flex; gap:2px; background:var(--wood-dark); padding:2px;}
-  .tab{flex:1; border:none; background:var(--wood); color:var(--paper); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13.5px; padding:13px 6px; cursor:pointer;}
+  .tabs{display:flex; gap:2px; background:var(--wood-dark); padding:2px; flex-wrap:wrap;}
+  .tab{flex:1 1 22%; border:none; background:var(--wood); color:var(--paper); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:12.5px; padding:12px 4px; cursor:pointer;}
   .tab.active{background:var(--navy); color:var(--gold);}
-  .tab .num{font-family:'JetBrains Mono',monospace; font-size:10.5px; opacity:0.7; margin-right:5px;}
+  .tab .num{font-family:'JetBrains Mono',monospace; font-size:10px; opacity:0.7; margin-right:3px;}
   .subpanel{display:none;}
   .subpanel.active{display:block;}
 
@@ -174,6 +181,22 @@
   .manage-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .manage-btn{flex:0 0 auto; border:1px solid var(--hairline); background:var(--paper); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:12px; padding:7px 10px; border-radius:8px; cursor:pointer;}
   .manage-btn.danger{color:var(--red-dark); border-color:#F0C9C9;}
+
+  .stat-section{margin-bottom:1.6rem; padding-bottom:1.4rem; border-bottom:1px dashed var(--hairline);}
+  .stat-section:last-child{border-bottom:none;}
+  .range-controls{display:flex; align-items:center; gap:8px; margin:0.6rem 0; flex-wrap:wrap;}
+  .range-controls input[type=date]{width:auto; flex:1 1 120px;}
+  .chart-wrap{position:relative; height:210px; margin:0.6rem 0;}
+  .metric-controls select{margin-bottom:0.2rem;}
+  .trend-cards{display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-top:0.7rem;}
+  .trend-card{border-radius:10px; padding:0.7rem 0.8rem; border:1px solid var(--hairline);}
+  .trend-card.good{background:#EAF1EC;}
+  .trend-card.bad{background:#F7E1E1;}
+  .trend-label{font-family:'JetBrains Mono',monospace; font-size:9.5px; color:#8A8574; margin:0 0 3px;}
+  .trend-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13px; margin:0;}
+  .request-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.8rem 1rem; margin-bottom:0.55rem;}
+  .request-date{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#8A8574; margin:0 0 4px;}
+  .request-text{font-size:13.5px; margin:0 0 6px; white-space:pre-wrap;}
 </style>
 </head>
 <body>
@@ -191,6 +214,7 @@
     <button onclick="triggerInstall()">追加</button>
   </div>
 
+  <!-- SCREEN: ROLE SELECT -->
   <div class="screen active" id="screenRole">
     <div class="error-notice" id="connError">クラウドに接続できません。firebase-config.js の設定が正しいか確認してください。</div>
     <div class="notice">選手はコンディションを記録、監督/トレーナーはチーム全体の状態を確認できます。選手の回答データは監督/トレーナーの画面(PIN保護)からのみ閲覧できます。</div>
@@ -204,8 +228,15 @@
         <div><p class="role-name">監督/トレーナーとして見る</p><p class="role-desc">チームの状態を確認(PIN必要)</p></div>
       </div>
     </div>
+
+    <div class="field-card" style="margin-top:1.4rem;">
+      <p class="field-label">監督への要望・メッセージ(匿名)</p>
+      <textarea id="requestText" rows="3" placeholder="気になることがあれば匿名で送れます。名前は記録されません。"></textarea>
+      <button class="btn-secondary" onclick="sendRequest()" id="sendRequestBtn">送信する</button>
+    </div>
   </div>
 
+  <!-- SCREEN: PLAYER SETUP -->
   <div class="screen" id="screenPlayerSetup">
     <div class="field-card">
       <p class="field-label">名前を選ぶ</p>
@@ -223,14 +254,17 @@
     <button class="btn-secondary" onclick="showScreen('screenRole')">戻る</button>
   </div>
 
+  <!-- SCREEN: PLAYER APP -->
   <div class="screen" id="screenPlayerApp">
     <div class="top-bar">
       <p class="who">選手: <span id="currentPlayerLabel">-</span></p>
       <button class="btn-link" onclick="logoutPlayer()">切り替え</button>
     </div>
     <div class="tabs">
-      <button class="tab active" id="pTabBtn1" onclick="switchPlayerTab(1)"><span class="num">01</span>コンディションチェック</button>
-      <button class="tab" id="pTabBtn2" onclick="switchPlayerTab(2)"><span class="num">02</span>宅トレメニュー</button>
+      <button class="tab active" id="pTabBtn1" onclick="switchPlayerTab(1)"><span class="num">01</span>コンディション</button>
+      <button class="tab" id="pTabBtn2" onclick="switchPlayerTab(2)"><span class="num">02</span>宅トレ</button>
+      <button class="tab" id="pTabBtn3" onclick="switchPlayerTab(3)"><span class="num">03</span>筋トレ記録</button>
+      <button class="tab" id="pTabBtn4" onclick="switchPlayerTab(4)"><span class="num">04</span>自分の記録</button>
     </div>
 
     <div class="subpanel active" id="pPanel1" style="padding:1.6rem 1.5rem 0;">
@@ -295,8 +329,18 @@
       <div class="goal-grid" id="goalGrid"></div>
       <div id="menuArea"><p class="placeholder">項目を選ぶとメニューが表示されます</p></div>
     </div>
+
+    <div class="subpanel" id="pPanel3" style="padding:1.6rem 1.5rem 0;">
+      <p class="goal-intro">今日の筋トレ記録</p>
+      <div id="strengthInputArea"><p class="placeholder">読み込み中...</p></div>
+    </div>
+
+    <div class="subpanel" id="pPanel4" style="padding:1.6rem 1.5rem 0;">
+      <div id="myStatsContent"><p class="placeholder">読み込み中...</p></div>
+    </div>
   </div>
 
+  <!-- SCREEN: COACH PIN -->
   <div class="screen" id="screenCoachPin">
     <div class="field-card">
       <p class="field-label" id="pinLabel">PINを入力してください</p>
@@ -308,33 +352,64 @@
     <p class="hint" style="margin-top:1rem;">※ このPINは同じチームの端末間で共有される簡易的なロックです。厳密なアカウント認証ではないため、完全な機密情報の保護には利用しないでください。</p>
   </div>
 
+  <!-- SCREEN: COACH DASHBOARD -->
   <div class="screen" id="screenCoachDash">
-    <div class="top-bar" style="padding:0 0 1rem;">
+    <div class="capacity-banner" id="capacityBanner"></div>
+    <div class="top-bar" style="padding:1rem 1.5rem 0;">
       <p class="who">監督ダッシュボード</p>
       <button class="btn-link" onclick="logoutCoach()">ロック</button>
     </div>
-    <div class="coach-stats" id="coachStats"></div>
-    <div class="team-advice" id="teamAdvice"></div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-      <p class="goal-intro" style="margin-bottom:0;">選手一覧(今日の状態)</p>
-      <button class="btn-link" onclick="showScreen('screenCoachManage'); renderPlayerManage();">選手を管理</button>
+    <div class="tabs" style="margin-top:1rem;">
+      <button class="tab active" id="cTabBtn1" onclick="switchCoachTab(1)">概要</button>
+      <button class="tab" id="cTabBtn2" onclick="switchCoachTab(2)">疲労</button>
+      <button class="tab" id="cTabBtn3" onclick="switchCoachTab(3)">筋トレ</button>
+      <button class="tab" id="cTabBtn4" onclick="switchCoachTab(4)">要望</button>
+      <button class="tab" id="cTabBtn5" onclick="switchCoachTab(5)">データ管理</button>
     </div>
-    <ul class="roster-list" id="rosterList"></ul>
+
+    <div class="subpanel active" id="cPanel1" style="padding:1.6rem 1.5rem 0;">
+      <div class="coach-stats" id="coachStats"></div>
+      <div class="team-advice" id="teamAdvice"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+        <p class="goal-intro" style="margin-bottom:0;">選手一覧(今日の状態)</p>
+        <button class="btn-link" onclick="showScreen('screenCoachManage'); renderPlayerManage();">選手を管理</button>
+      </div>
+      <ul class="roster-list" id="rosterList"></ul>
+    </div>
+
+    <div class="subpanel" id="cPanel2" style="padding:1.6rem 1.5rem 0;">
+      <div id="coachFatigueContent"><p class="placeholder">読み込み中...</p></div>
+    </div>
+
+    <div class="subpanel" id="cPanel3" style="padding:1.6rem 1.5rem 0;">
+      <div id="coachStrengthContent"><p class="placeholder">読み込み中...</p></div>
+    </div>
+
+    <div class="subpanel" id="cPanel4" style="padding:1.6rem 1.5rem 0;">
+      <p class="goal-intro">選手からの要望(匿名)</p>
+      <div id="requestsList"><p class="placeholder">読み込み中...</p></div>
+    </div>
+
+    <div class="subpanel" id="cPanel5" style="padding:1.6rem 1.5rem 0;">
+      <div id="dataManageContent"><p class="placeholder">読み込み中...</p></div>
+    </div>
   </div>
 
+  <!-- SCREEN: COACH PLAYER MANAGE -->
   <div class="screen" id="screenCoachManage">
     <div class="top-bar" style="padding:0 0 1rem;">
       <p class="who">選手管理</p>
-      <button class="btn-link" onclick="showScreen('screenCoachDash'); renderDashboard();">一覧に戻る</button>
+      <button class="btn-link" onclick="showScreen('screenCoachDash'); switchCoachTab(1);">一覧に戻る</button>
     </div>
     <p class="hint" style="margin-bottom:1rem;">名前の修正や、退部した選手の削除ができます。削除時は記録データを残すかどうか選べます。</p>
     <ul class="roster-list" id="manageList"></ul>
   </div>
 
+  <!-- SCREEN: COACH PLAYER DETAIL -->
   <div class="screen" id="screenCoachDetail">
     <div class="top-bar" style="padding:0 0 1rem;">
       <p class="who" id="detailName">選手名</p>
-      <button class="btn-link" onclick="showScreen('screenCoachDash'); renderDashboard();">一覧に戻る</button>
+      <button class="btn-link" onclick="showScreen('screenCoachDash'); switchCoachTab(1);">一覧に戻る</button>
     </div>
     <div id="detailLatest"></div>
     <p class="goal-intro" style="margin:1rem 0 0.6rem;">最近の記録</p>
@@ -367,6 +442,13 @@ function triggerInstall(){
 window.addEventListener('appinstalled', function(){
   document.getElementById('installBanner').classList.remove('show');
 });
+
+/* ---------------- utility ---------------- */
+function escapeHtml(s){
+  if(s===null||s===undefined) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function todayStr(){ return new Date().toISOString().slice(0,10); }
 
 /* ---------------- cloud storage (Firestore) ---------------- */
 async function fsGetDoc(collection, id){
@@ -407,18 +489,156 @@ async function saveRoster(list){
 function slugify(name){
   return 'p_' + name.trim().replace(/\s+/g,'').replace(/[^a-zA-Z0-9ぁ-んァ-ヶ一-龠]/g,'') + '_' + Math.random().toString(36).slice(2,6);
 }
-async function loadPlayerData(id){
-  return await fsGetDoc('players', id);
-}
-async function savePlayerData(id, data){
-  await fsSetDoc('players', id, data);
-}
 async function getCoachPin(){
   var doc = await fsGetDoc('meta', 'coach');
   return doc ? doc.pin : null;
 }
 async function setCoachPinRemote(pin){
   await fsSetDoc('meta', 'coach', {pin:pin});
+}
+
+/* records (subcollections) */
+async function getFatigueRecords(playerId){
+  try{
+    var snap = await db.collection('players').doc(playerId).collection('fatigue_records').orderBy('ts').get();
+    var arr = [];
+    snap.forEach(function(doc){ var d=doc.data(); d._id=doc.id; arr.push(d); });
+    return arr;
+  }catch(e){ document.getElementById('connError').classList.add('show'); return []; }
+}
+async function getTrainingRecords(playerId){
+  try{
+    var snap = await db.collection('players').doc(playerId).collection('training_records').orderBy('ts').get();
+    var arr = [];
+    snap.forEach(function(doc){ var d=doc.data(); d._id=doc.id; arr.push(d); });
+    return arr;
+  }catch(e){ document.getElementById('connError').classList.add('show'); return []; }
+}
+async function addFatigueRecord(playerId, record){
+  try{
+    await db.collection('players').doc(playerId).collection('fatigue_records').add(record);
+    bumpStats();
+    return true;
+  }catch(e){ document.getElementById('connError').classList.add('show'); return false; }
+}
+async function addTrainingRecord(playerId, record){
+  try{
+    await db.collection('players').doc(playerId).collection('training_records').add(record);
+    bumpStats();
+    return true;
+  }catch(e){ document.getElementById('connError').classList.add('show'); return false; }
+}
+async function deleteAllPlayerRecords(id){
+  try{
+    var fatSnap = await db.collection('players').doc(id).collection('fatigue_records').get();
+    var deletes = [];
+    fatSnap.forEach(function(doc){ deletes.push(doc.ref.delete()); });
+    var trainSnap = await db.collection('players').doc(id).collection('training_records').get();
+    trainSnap.forEach(function(doc){ deletes.push(doc.ref.delete()); });
+    await Promise.all(deletes);
+  }catch(e){}
+}
+
+/* exercise config */
+async function getExerciseConfig(){
+  var doc = await fsGetDoc('meta', 'exerciseConfig');
+  return (doc && doc.items) ? doc.items : [];
+}
+async function saveExerciseConfig(items){
+  await fsSetDoc('meta', 'exerciseConfig', {items:items});
+}
+
+/* requests (anonymous) */
+async function submitRequest(text){
+  try{ await db.collection('requests').add({text:text, ts:Date.now()}); return true; }
+  catch(e){ return false; }
+}
+async function getRequests(){
+  try{
+    var snap = await db.collection('requests').orderBy('ts','desc').get();
+    var arr = [];
+    snap.forEach(function(doc){ var d=doc.data(); d._id=doc.id; arr.push(d); });
+    return arr;
+  }catch(e){ return []; }
+}
+async function deleteRequest(id){
+  try{ await db.collection('requests').doc(id).delete(); }catch(e){}
+}
+
+/* stats / capacity estimate */
+async function bumpStats(){
+  try{
+    var ref = db.collection('meta').doc('stats');
+    var snap = await ref.get();
+    if(!snap.exists){
+      await ref.set({ totalRecords: 1, firstRecordTs: Date.now() });
+    } else {
+      await ref.update({ totalRecords: firebase.firestore.FieldValue.increment(1) });
+    }
+  }catch(e){}
+}
+async function getCapacityInfo(){
+  var statsDoc = await fsGetDoc('meta','stats');
+  if(!statsDoc || !statsDoc.totalRecords) return null;
+  var items = await getExerciseConfig();
+  var bytesPerFatigue = 260;
+  var bytesPerTraining = 90 + items.length*20;
+  var avgBytes = (bytesPerFatigue + bytesPerTraining) / 2;
+  var totalBytes = statsDoc.totalRecords * avgBytes;
+  var capacityBytes = 1 * 1024 * 1024 * 1024;
+  var usedPct = totalBytes / capacityBytes * 100;
+  var daysSinceFirst = Math.max(1, (Date.now() - statsDoc.firstRecordTs) / 86400000);
+  var recordsPerDay = statsDoc.totalRecords / daysSinceFirst;
+  var bytesPerDay = recordsPerDay * avgBytes;
+  var remainingBytes = capacityBytes - totalBytes;
+  var daysRemaining = bytesPerDay > 0 ? remainingBytes / bytesPerDay : Infinity;
+  var monthsRemaining = daysRemaining / 30;
+  return { totalRecords: statsDoc.totalRecords, usedPct: usedPct, monthsRemaining: monthsRemaining };
+}
+
+/* CSV export */
+function csvEscape(v){
+  v = (v===null||v===undefined) ? '' : String(v);
+  if(/[",\n]/.test(v)){ v = '"'+v.replace(/"/g,'""')+'"'; }
+  return v;
+}
+function downloadCSV(filename, rows){
+  var csv = rows.map(function(r){ return r.map(csvEscape).join(','); }).join('\r\n');
+  var blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+async function exportFatigueCSV(){
+  var roster = await loadRoster();
+  var rows = [['選手名','日付','合計スコア','レベル','質問1','質問2','質問3','質問4','質問5']];
+  for(var i=0;i<roster.length;i++){
+    var recs = await getFatigueRecords(roster[i].id);
+    recs.forEach(function(r){
+      var s = r.scores || [];
+      rows.push([roster[i].name, r.date, r.total, r.level, s[0],s[1],s[2],s[3],s[4]]);
+    });
+  }
+  downloadCSV('疲労記録_'+todayStr()+'.csv', rows);
+}
+async function exportTrainingCSV(){
+  var roster = await loadRoster();
+  var items = await getExerciseConfig();
+  var header = ['選手名','日付'].concat(items.map(function(it){ return it.name+'('+it.unit+')'; }));
+  var rows = [header];
+  for(var i=0;i<roster.length;i++){
+    var recs = await getTrainingRecords(roster[i].id);
+    recs.forEach(function(r){
+      var row = [roster[i].name, r.date];
+      items.forEach(function(it){
+        row.push(r.values && r.values[it.id]!==undefined ? r.values[it.id] : '');
+      });
+      rows.push(row);
+    });
+  }
+  downloadCSV('筋トレ記録_'+todayStr()+'.csv', rows);
 }
 
 /* ---------------- screens ---------------- */
@@ -466,6 +686,7 @@ async function startPlayerSession(){
   document.getElementById('result').style.display = 'none';
   document.getElementById('whoTag').textContent = 'PLAYER MODE';
   renderGoalGrid();
+  switchPlayerTab(1);
   showScreen('screenPlayerApp');
 }
 function logoutPlayer(){
@@ -474,14 +695,30 @@ function logoutPlayer(){
   document.getElementById('whoTag').textContent = 'CONDITIONING ASSISTANT';
   document.getElementById('boardSub').textContent = 'バスケ選手のための休息 & 宅トレナビ';
 }
+
 function switchPlayerTab(n){
-  document.getElementById('pPanel1').classList.toggle('active', n===1);
-  document.getElementById('pPanel2').classList.toggle('active', n===2);
-  document.getElementById('pTabBtn1').classList.toggle('active', n===1);
-  document.getElementById('pTabBtn2').classList.toggle('active', n===2);
+  for(var i=1;i<=4;i++){
+    document.getElementById('pPanel'+i).classList.toggle('active', i===n);
+    document.getElementById('pTabBtn'+i).classList.toggle('active', i===n);
+  }
+  if(n===3){ renderStrengthInputTab(); }
+  if(n===4){ renderMyStats(); }
 }
+
 function updateVal(i){
   document.getElementById('v'+i).textContent = document.getElementById('q'+i).value;
+}
+
+/* ---------------- anonymous request box (top page) ---------------- */
+async function sendRequest(){
+  var el = document.getElementById('requestText');
+  var text = el.value.trim();
+  if(!text){ alert('内容を入力してください。'); return; }
+  var btn = document.getElementById('sendRequestBtn');
+  btn.disabled = true;
+  var ok = await submitRequest(text);
+  btn.disabled = false;
+  if(ok){ alert('送信しました。ご協力ありがとうございます。'); el.value=''; }
 }
 
 /* ---------------- fatigue calc ---------------- */
@@ -546,21 +783,13 @@ async function diagnose(){
   var btn = document.getElementById('diagnoseBtn');
   btn.disabled = true; btn.textContent = '送信中...';
 
-  var today = new Date();
-  var dateStr = today.toISOString().slice(0,10);
-  var record = {date:dateStr, ts:Date.now(), scores:scores, total:total, levelKey:res.levelKey, level:res.level};
-
-  var data = await loadPlayerData(currentPlayer.id);
-  if(!data){ data = {name:currentPlayer.name, history:[]}; }
-  data.name = currentPlayer.name;
-  data.history.push(record);
-  if(data.history.length > 30){ data.history = data.history.slice(-30); }
-  await savePlayerData(currentPlayer.id, data);
+  var record = {date:todayStr(), ts:Date.now(), scores:scores, total:total, levelKey:res.levelKey, level:res.level};
+  await addFatigueRecord(currentPlayer.id, record);
 
   btn.disabled = false; btn.textContent = '診断して監督に送信';
 }
 
-/* ---------------- home training menu ---------------- */
+/* ---------------- home training menu (bodyweight, high-school safe) ---------------- */
 var goals = [
   {id:'jump', icon:'01', name:'ジャンプ力', desc:'跳躍力・爆発力',
     exercises:[
@@ -620,8 +849,157 @@ function selectGoal(id){
   g.exercises.forEach(function(ex, idx){
     html += '<div class="ex-card"><div class="ex-num">'+(idx+1)+'</div><div><p class="ex-name">'+ex.name+'</p><p class="ex-sets">'+ex.sets+'</p><p class="ex-tip">'+ex.tip+'</p></div></div>';
   });
-  html += '<p class="menu-note">器具不要・自宅でできるメニューです。フォームを優先し、痛みが出た場合は中止してください。</p>';
+  html += '<p class="menu-note">高校生年代向けの、器具不要・自重中心のメニューです。回数よりフォームを優先し、痛みが出た場合や成長期特有の違和感がある場合はすぐに中止して監督・トレーナーに相談してください。</p>';
   area.innerHTML = html;
+}
+
+/* ---------------- player: strength training input ---------------- */
+async function renderStrengthInputTab(){
+  var container = document.getElementById('strengthInputArea');
+  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var items = await getExerciseConfig();
+  if(items.length===0){
+    container.innerHTML = '<p class="placeholder">監督が筋トレ項目を設定すると、ここに入力欄が表示されます。</p>';
+    return;
+  }
+  var html = '';
+  items.forEach(function(it){
+    html += '<div class="q-card"><div class="q-head"><span class="q-label">'+escapeHtml(it.name)+(it.unit? ' ('+escapeHtml(it.unit)+')':'')+'</span></div>' +
+      '<input type="number" step="any" inputmode="decimal" id="strIn_'+it.id+'" placeholder="今日の記録(未入力でもOK)">' +
+      '</div>';
+  });
+  html += '<button class="btn-primary" onclick="submitTraining()" id="submitTrainingBtn">今日の記録を保存</button>';
+  container.innerHTML = html;
+}
+async function submitTraining(){
+  var items = await getExerciseConfig();
+  var values = {};
+  var anyEntered = false;
+  items.forEach(function(it){
+    var el = document.getElementById('strIn_'+it.id);
+    if(el && el.value !== ''){ values[it.id] = Number(el.value); anyEntered = true; }
+  });
+  if(!anyEntered){ alert('少なくとも1項目は入力してください。'); return; }
+  var btn = document.getElementById('submitTrainingBtn');
+  btn.disabled = true; btn.textContent = '保存中...';
+  var record = {date:todayStr(), ts:Date.now(), values:values};
+  await addTrainingRecord(currentPlayer.id, record);
+  btn.disabled = false; btn.textContent = '今日の記録を保存';
+  alert('記録を保存しました。');
+  items.forEach(function(it){ var el=document.getElementById('strIn_'+it.id); if(el) el.value=''; });
+}
+
+/* ---------------- shared: charts / date-range ---------------- */
+var chartInstances = {};
+var rangeRedrawFns = {};
+function renderLineChart(canvasId, series, label, color){
+  var ctx = document.getElementById(canvasId);
+  if(!ctx) return;
+  if(chartInstances[canvasId]){ chartInstances[canvasId].destroy(); chartInstances[canvasId] = null; }
+  if(!series || series.length===0) return;
+  chartInstances[canvasId] = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: series.map(function(p){return p.date;}),
+      datasets:[{
+        label:label,
+        data: series.map(function(p){return p.value;}),
+        borderColor: color,
+        backgroundColor: color,
+        tension:0.25,
+        pointRadius:3
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{ x:{ ticks:{ maxRotation:45, minRotation:45, font:{size:9} } }, y:{ beginAtZero:false } }
+    }
+  });
+}
+function filterByRange(series, start, end){
+  return series.filter(function(p){
+    if(start && p.date < start) return false;
+    if(end && p.date > end) return false;
+    return true;
+  });
+}
+function dateRangeControlsHtml(prefix){
+  return '<div class="range-controls">' +
+    '<input type="date" id="'+prefix+'Start" onchange="onRangeChange(\''+prefix+'\')">' +
+    '<span>〜</span>' +
+    '<input type="date" id="'+prefix+'End" onchange="onRangeChange(\''+prefix+'\')">' +
+    '<button class="btn-link" onclick="resetRange(\''+prefix+'\')">全期間</button>' +
+    '</div>';
+}
+function onRangeChange(prefix){ if(rangeRedrawFns[prefix]) rangeRedrawFns[prefix](); }
+function resetRange(prefix){
+  var s = document.getElementById(prefix+'Start');
+  var e = document.getElementById(prefix+'End');
+  if(s) s.value = '';
+  if(e) e.value = '';
+  onRangeChange(prefix);
+}
+function getRange(prefix){
+  var s = document.getElementById(prefix+'Start');
+  var e = document.getElementById(prefix+'End');
+  return { start: s && s.value ? s.value : null, end: e && e.value ? e.value : null };
+}
+
+/* ---------------- player: my stats (personal graphs) ---------------- */
+var selfFatigueSeries = [];
+var selfExSeriesMap = {};
+async function renderMyStats(){
+  var container = document.getElementById('myStatsContent');
+  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var fatigueRecs = await getFatigueRecords(currentPlayer.id);
+  var trainingRecs = await getTrainingRecords(currentPlayer.id);
+  var items = await getExerciseConfig();
+
+  var html = '<div class="stat-section"><p class="goal-intro">疲労スコアの推移</p>' +
+    dateRangeControlsHtml('selfFatigue') +
+    '<div class="chart-wrap"><canvas id="selfFatigueChart"></canvas></div></div>';
+
+  items.forEach(function(it){
+    html += '<div class="stat-section"><p class="goal-intro">'+escapeHtml(it.name)+'の推移'+(it.unit?'('+escapeHtml(it.unit)+')':'')+'</p>' +
+      dateRangeControlsHtml('selfEx_'+it.id) +
+      '<div class="chart-wrap"><canvas id="selfExChart_'+it.id+'"></canvas></div></div>';
+  });
+  if(items.length===0){
+    html += '<p class="hint">監督が筋トレ項目を設定すると、ここに記録グラフが表示されます。</p>';
+  }
+  container.innerHTML = html;
+
+  selfFatigueSeries = fatigueRecs.map(function(r){ return {date:r.date, ts:r.ts, value:r.total}; });
+  selfExSeriesMap = {};
+  items.forEach(function(it){
+    selfExSeriesMap[it.id] = trainingRecs
+      .filter(function(r){ return r.values && r.values[it.id]!==undefined && r.values[it.id]!==null && r.values[it.id]!==''; })
+      .map(function(r){ return {date:r.date, ts:r.ts, value:Number(r.values[it.id])}; });
+  });
+
+  rangeRedrawFns['selfFatigue'] = drawSelfFatigueChart;
+  items.forEach(function(it){
+    rangeRedrawFns['selfEx_'+it.id] = function(){ drawSelfExChart(it.id); };
+  });
+
+  drawSelfFatigueChart();
+  items.forEach(function(it){ drawSelfExChart(it.id); });
+
+  if(fatigueRecs.length===0 && trainingRecs.length===0){
+    container.innerHTML = '<p class="placeholder">まだ記録がありません。コンディションチェックや筋トレ記録を入力すると、ここにグラフが表示されます。</p>';
+  }
+}
+function drawSelfFatigueChart(){
+  var r = getRange('selfFatigue');
+  var filtered = filterByRange(selfFatigueSeries, r.start, r.end);
+  renderLineChart('selfFatigueChart', filtered, '疲労スコア', '#E7B23B');
+}
+function drawSelfExChart(itemId){
+  var r = getRange('selfEx_'+itemId);
+  var filtered = filterByRange(selfExSeriesMap[itemId]||[], r.start, r.end);
+  renderLineChart('selfExChart_'+itemId, filtered, itemId, '#3D7C72');
 }
 
 /* ---------------- coach: pin gate ---------------- */
@@ -647,17 +1025,21 @@ async function submitPin(){
   if(!val){ alert('PINを入力してください。'); return; }
   if(pendingIsSetup){
     await setCoachPinRemote(val);
-    showScreen('screenCoachDash');
-    renderDashboard();
+    enterCoachDashboard();
   } else {
     var pin = await getCoachPin();
     if(val === pin){
-      showScreen('screenCoachDash');
-      renderDashboard();
+      enterCoachDashboard();
     } else {
       alert('PINが違います。');
     }
   }
+}
+function enterCoachDashboard(){
+  showScreen('screenCoachDash');
+  switchCoachTab(1);
+  renderDashboard();
+  checkCapacityBanner();
 }
 function logoutCoach(){
   showScreen('screenRole');
@@ -665,19 +1047,42 @@ function logoutCoach(){
   document.getElementById('boardSub').textContent = 'バスケ選手のための休息 & 宅トレナビ';
 }
 
-/* ---------------- coach: dashboard ---------------- */
+function switchCoachTab(n){
+  for(var i=1;i<=5;i++){
+    document.getElementById('cPanel'+i).classList.toggle('active', i===n);
+    document.getElementById('cTabBtn'+i).classList.toggle('active', i===n);
+  }
+  if(n===2){
+    document.getElementById('coachFatigueContent').innerHTML = metricSectionHtml('coachFatigue','疲労スコアの推移(チーム)');
+    loadMetricData('coachFatigue', function(r){return {date:r.date, ts:r.ts, value:r.total};}, true, '疲労スコア', '#E7B23B', getFatigueRecords);
+  }
+  if(n===3){ renderCoachStrengthTab(); }
+  if(n===4){ renderRequestsTab(); }
+  if(n===5){ renderDataManageTab(); }
+}
+
+async function checkCapacityBanner(){
+  var info = await getCapacityInfo();
+  var el = document.getElementById('capacityBanner');
+  if(info && info.monthsRemaining<=1.5){
+    el.style.display='block';
+    el.textContent = '⚠ 保存容量の残りが少なくなってきています(目安: 約'+info.monthsRemaining.toFixed(1)+'ヶ月分)。「データ管理」タブからCSV書き出しをご検討ください。';
+  } else {
+    el.style.display='none';
+  }
+}
+
+/* ---------------- coach: dashboard (overview tab) ---------------- */
 var lastLoadedPlayers = [];
 async function renderDashboard(){
   document.getElementById('rosterList').innerHTML = '<p class="placeholder">読み込み中...</p>';
   var roster = await loadRoster();
-  var todayStr = new Date().toISOString().slice(0,10);
+  var today = todayStr();
   var players = [];
   for(var i=0;i<roster.length;i++){
-    var d = await loadPlayerData(roster[i].id);
-    var latest = null;
-    if(d && d.history && d.history.length){ latest = d.history[d.history.length-1]; }
-    players.push({id:roster[i].id, name:roster[i].name, data:d, latest:latest,
-      isToday: latest ? latest.date===todayStr : false});
+    var recs = await getFatigueRecords(roster[i].id);
+    var latest = recs.length ? recs[recs.length-1] : null;
+    players.push({id:roster[i].id, name:roster[i].name, latest:latest, isToday: latest ? latest.date===today : false});
   }
   lastLoadedPlayers = players;
 
@@ -723,10 +1128,51 @@ async function renderDashboard(){
     row.onclick = function(){ showPlayerDetail(p.id); };
     row.innerHTML =
       '<span class="status-dot '+dotClass+'"></span>' +
-      '<span class="roster-name">'+p.name+'</span>' +
-      '<span class="badge-level '+ (p.isToday?p.latest.levelKey:'none') +'">'+badgeText+'</span>';
+      '<span class="roster-name">'+escapeHtml(p.name)+'</span>' +
+      '<span class="badge-level '+ (p.isToday?p.latest.levelKey:'none') +'">'+escapeHtml(badgeText)+'</span>';
     listEl.appendChild(row);
   });
+}
+
+async function showPlayerDetail(id){
+  var p = lastLoadedPlayers.find(function(x){ return x.id===id; });
+  if(!p) return;
+  document.getElementById('detailName').textContent = p.name;
+  var latestEl = document.getElementById('detailLatest');
+  latestEl.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  showScreen('screenCoachDetail');
+
+  var recs = await getFatigueRecords(id);
+  var latest = recs.length ? recs[recs.length-1] : null;
+  if(latest){
+    var res = computeFatigue(latest.total);
+    latestEl.innerHTML =
+      '<div class="stat-row">' +
+      '<div class="stat-card"><p class="stat-label">直近スコア('+latest.date+')</p><p class="stat-num">'+latest.total+'<span>/25</span></p></div>' +
+      '<div class="stat-card"><p class="stat-label">レベル</p><p class="stat-num" style="font-size:16px;">'+latest.level+'</p></div>' +
+      '</div>' +
+      '<div class="advice-card '+res.cardClass+'"><p class="advice-title">推奨対応</p><p class="advice-body">'+res.adviceBody+'</p></div>';
+  } else {
+    latestEl.innerHTML = '<p class="placeholder">まだ記録がありません</p>';
+  }
+
+  var histEl = document.getElementById('detailHistory');
+  if(recs.length){
+    var rows = recs.slice().reverse().slice(0,14);
+    var html = '';
+    var colorMap = {low:'#3D7C72', mid:'#E7B23B', high:'#B33F3F'};
+    rows.forEach(function(r){
+      var widthPct = Math.round((r.total/25)*100);
+      html += '<div class="history-row">' +
+        '<span class="history-date">'+r.date+'</span>' +
+        '<span class="history-bar-track"><span class="history-bar-fill" style="width:'+widthPct+'%; background:'+colorMap[r.levelKey]+';"></span></span>' +
+        '<span class="history-score">'+r.total+'</span>' +
+        '</div>';
+    });
+    histEl.innerHTML = html;
+  } else {
+    histEl.innerHTML = '<p class="placeholder">記録がありません</p>';
+  }
 }
 
 /* ---------------- coach: player management ---------------- */
@@ -743,7 +1189,7 @@ async function renderPlayerManage(){
     var row = document.createElement('li');
     row.className = 'manage-row';
     row.innerHTML =
-      '<span class="manage-name">'+p.name+'</span>' +
+      '<span class="manage-name">'+escapeHtml(p.name)+'</span>' +
       '<button class="manage-btn" data-action="edit">名前を編集</button>' +
       '<button class="manage-btn danger" data-action="delete">削除</button>';
     row.querySelector('[data-action="edit"]').onclick = function(){ editPlayerName(p.id, p.name); };
@@ -751,78 +1197,227 @@ async function renderPlayerManage(){
     listEl.appendChild(row);
   });
 }
-
 async function editPlayerName(id, currentName){
   var newName = prompt('新しい名前を入力してください', currentName);
   if(newName===null) return;
   newName = newName.trim();
   if(!newName){ alert('名前を空にはできません。'); return; }
-
   var roster = await loadRoster();
   var idx = roster.findIndex(function(p){ return p.id===id; });
   if(idx===-1) return;
   roster[idx].name = newName;
   await saveRoster(roster);
-
-  var data = await loadPlayerData(id);
-  if(data){
-    data.name = newName;
-    await savePlayerData(id, data);
-  }
   renderPlayerManage();
 }
-
 async function deletePlayerFlow(id, name){
   var removeConfirm = confirm('「'+name+'」を選手一覧から削除しますか?');
   if(!removeConfirm) return;
-
   var alsoDeleteData = confirm('過去の記録データも完全に削除しますか?\n\n「OK」: 記録データも完全に削除します(元に戻せません)\n「キャンセル」: 一覧からは消しますが、記録データはそのまま残します');
-
   var roster = await loadRoster();
   roster = roster.filter(function(p){ return p.id!==id; });
   await saveRoster(roster);
-
   if(alsoDeleteData){
-    await fsDeleteDoc('players', id);
+    await deleteAllPlayerRecords(id);
   }
   renderPlayerManage();
 }
 
-function showPlayerDetail(id){
-  var p = lastLoadedPlayers.find(function(x){ return x.id===id; });
-  if(!p) return;
-  document.getElementById('detailName').textContent = p.name;
-  var latestEl = document.getElementById('detailLatest');
-  if(p.latest){
-    var res = computeFatigue(p.latest.total);
-    latestEl.innerHTML =
-      '<div class="stat-row">' +
-      '<div class="stat-card"><p class="stat-label">直近スコア('+p.latest.date+')</p><p class="stat-num">'+p.latest.total+'<span>/25</span></p></div>' +
-      '<div class="stat-card"><p class="stat-label">レベル</p><p class="stat-num" style="font-size:16px;">'+p.latest.level+'</p></div>' +
-      '</div>' +
-      '<div class="advice-card '+res.cardClass+'"><p class="advice-title">推奨対応</p><p class="advice-body">'+res.adviceBody+'</p></div>';
+/* ---------------- coach: metric sections (shared by fatigue & strength tabs) ---------------- */
+var coachSeriesCache = {};
+function metricSectionHtml(prefix, title){
+  return '<div class="stat-section">' +
+    '<p class="goal-intro">'+escapeHtml(title)+'</p>' +
+    '<div class="metric-controls"><select id="'+prefix+'PlayerSelect" onchange="onMetricPlayerChange(\''+prefix+'\')">' +
+      '<option value="">チーム平均</option>' +
+    '</select></div>' +
+    dateRangeControlsHtml(prefix) +
+    '<div class="chart-wrap"><canvas id="'+prefix+'Chart"></canvas></div>' +
+    '<div class="trend-cards" id="'+prefix+'Trend"></div>' +
+  '</div>';
+}
+function buildDateAverageSeries(perPlayerSeries){
+  var byDate = {};
+  Object.keys(perPlayerSeries).forEach(function(pid){
+    perPlayerSeries[pid].forEach(function(r){
+      if(!byDate[r.date]) byDate[r.date] = [];
+      byDate[r.date].push(r.value);
+    });
+  });
+  var dates = Object.keys(byDate).sort();
+  return dates.map(function(d){
+    var vals = byDate[d];
+    var avg = vals.reduce(function(a,b){return a+b;},0)/vals.length;
+    return {date:d, value:avg};
+  });
+}
+function computeTrendExtremes(perPlayerSeries, playerNames, lowerIsBetter){
+  var cutoff = Date.now() - 30*86400000;
+  var results = [];
+  Object.keys(perPlayerSeries).forEach(function(pid){
+    var recent = perPlayerSeries[pid].filter(function(r){ return r.ts>=cutoff; }).sort(function(a,b){return a.ts-b.ts;});
+    if(recent.length>=2){
+      var delta = recent[recent.length-1].value - recent[0].value;
+      results.push({pid:pid, name:playerNames[pid], delta:delta});
+    }
+  });
+  if(results.length===0) return null;
+  results.sort(function(a,b){ return b.delta - a.delta; });
+  var maxDelta = results[0];
+  var minDelta = results[results.length-1];
+  if(lowerIsBetter){
+    return { best:minDelta, worst:maxDelta };
   } else {
-    latestEl.innerHTML = '<p class="placeholder">まだ記録がありません</p>';
+    return { best:maxDelta, worst:minDelta };
+  }
+}
+async function loadMetricData(prefix, extractFn, lowerIsBetter, label, color, recordFetcher){
+  var roster = await loadRoster();
+  var perPlayerSeries = {};
+  var playerNames = {};
+  for(var i=0;i<roster.length;i++){
+    var recs = await recordFetcher(roster[i].id);
+    playerNames[roster[i].id] = roster[i].name;
+    perPlayerSeries[roster[i].id] = recs.map(extractFn).filter(function(x){return x!==null;});
+  }
+  var teamSeries = buildDateAverageSeries(perPlayerSeries);
+  coachSeriesCache[prefix] = {perPlayerSeries:perPlayerSeries, teamSeries:teamSeries, playerNames:playerNames, lowerIsBetter:lowerIsBetter, label:label, color:color};
+
+  var sel = document.getElementById(prefix+'PlayerSelect');
+  if(sel){
+    sel.innerHTML = '<option value="">チーム平均</option>';
+    roster.forEach(function(p){
+      var opt = document.createElement('option');
+      opt.value = p.id; opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
   }
 
-  var histEl = document.getElementById('detailHistory');
-  if(p.data && p.data.history && p.data.history.length){
-    var rows = p.data.history.slice().reverse().slice(0,14);
-    var html = '';
-    rows.forEach(function(r){
-      var colorMap = {low:'#3D7C72', mid:'#E7B23B', high:'#B33F3F'};
-      var widthPct = Math.round((r.total/25)*100);
-      html += '<div class="history-row">' +
-        '<span class="history-date">'+r.date+'</span>' +
-        '<span class="history-bar-track"><span class="history-bar-fill" style="width:'+widthPct+'%; background:'+colorMap[r.levelKey]+';"></span></span>' +
-        '<span class="history-score">'+r.total+'</span>' +
-        '</div>';
-    });
-    histEl.innerHTML = html;
-  } else {
-    histEl.innerHTML = '<p class="placeholder">記録がありません</p>';
+  rangeRedrawFns[prefix] = function(){ drawMetricChart(prefix); };
+  renderTrendCards(prefix);
+  drawMetricChart(prefix);
+}
+function onMetricPlayerChange(prefix){ drawMetricChart(prefix); }
+function drawMetricChart(prefix){
+  var cache = coachSeriesCache[prefix];
+  if(!cache) return;
+  var sel = document.getElementById(prefix+'PlayerSelect');
+  var pid = sel ? sel.value : '';
+  var series = pid ? (cache.perPlayerSeries[pid]||[]) : cache.teamSeries;
+  var r = getRange(prefix);
+  var filtered = filterByRange(series, r.start, r.end);
+  renderLineChart(prefix+'Chart', filtered, cache.label, cache.color);
+}
+function renderTrendCards(prefix){
+  var cache = coachSeriesCache[prefix];
+  var el = document.getElementById(prefix+'Trend');
+  if(!el || !cache) return;
+  var extremes = computeTrendExtremes(cache.perPlayerSeries, cache.playerNames, cache.lowerIsBetter);
+  if(!extremes){
+    el.innerHTML = '<p class="hint">直近1か月のデータがまだ十分にありません。</p>';
+    return;
   }
-  showScreen('screenCoachDetail');
+  var improvedLabel = cache.lowerIsBetter ? '最も改善(直近1か月)' : '最も伸びた(直近1か月)';
+  var worsenedLabel = cache.lowerIsBetter ? '最も悪化(直近1か月)' : '最も下がった(直近1か月)';
+  el.innerHTML =
+    '<div class="trend-card good"><p class="trend-label">'+improvedLabel+'</p><p class="trend-name">'+escapeHtml(extremes.best.name)+'</p></div>' +
+    '<div class="trend-card bad"><p class="trend-label">'+worsenedLabel+'</p><p class="trend-name">'+escapeHtml(extremes.worst.name)+'</p></div>';
+}
+
+/* ---------------- coach: strength tab (item settings + graphs) ---------------- */
+async function renderCoachStrengthTab(){
+  var container = document.getElementById('coachStrengthContent');
+  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var items = await getExerciseConfig();
+  var html = renderStrengthManageHtml(items);
+  items.forEach(function(it){
+    html += metricSectionHtml('coachEx_'+it.id, it.name+'の推移(チーム)');
+  });
+  container.innerHTML = html;
+  items.forEach(function(it){
+    loadMetricData('coachEx_'+it.id, function(r){
+      if(!r.values || r.values[it.id]===undefined || r.values[it.id]===null || r.values[it.id]==='') return null;
+      return {date:r.date, ts:r.ts, value:Number(r.values[it.id])};
+    }, false, it.name, '#3D7C72', getTrainingRecords);
+  });
+}
+function renderStrengthManageHtml(items){
+  var html = '<div class="stat-section"><p class="goal-intro">筋トレ項目の設定</p><ul class="manage-list">';
+  if(items.length===0){
+    html += '<p class="hint">まだ項目がありません。下から追加してください。</p>';
+  }
+  items.forEach(function(it){
+    html += '<li class="manage-row"><span class="manage-name">'+escapeHtml(it.name)+(it.unit?'('+escapeHtml(it.unit)+')':'')+'</span><button class="manage-btn danger" onclick="removeExerciseItem(\''+it.id+'\')">削除</button></li>';
+  });
+  html += '</ul>' +
+    '<div class="field-card">' +
+    '<p class="field-label">新しい項目を追加</p>' +
+    '<input type="text" id="newExName" placeholder="例: ベンチプレス" style="margin-bottom:8px;">' +
+    '<input type="text" id="newExUnit" placeholder="単位(例: kg, 回, cm, 秒)">' +
+    '</div>' +
+    '<button class="btn-secondary" onclick="addExerciseItem()">追加する</button>' +
+  '</div>';
+  return html;
+}
+async function addExerciseItem(){
+  var name = document.getElementById('newExName').value.trim();
+  var unit = document.getElementById('newExUnit').value.trim();
+  if(!name){ alert('項目名を入力してください。'); return; }
+  var items = await getExerciseConfig();
+  var id = 'ex_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  items.push({id:id, name:name, unit: unit || ''});
+  await saveExerciseConfig(items);
+  renderCoachStrengthTab();
+}
+async function removeExerciseItem(id){
+  if(!confirm('この項目を削除しますか?(過去の記録データ自体は残りますが、入力欄やグラフには出なくなります)')) return;
+  var items = await getExerciseConfig();
+  items = items.filter(function(it){ return it.id!==id; });
+  await saveExerciseConfig(items);
+  renderCoachStrengthTab();
+}
+
+/* ---------------- coach: requests tab ---------------- */
+async function renderRequestsTab(){
+  var container = document.getElementById('requestsList');
+  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var reqs = await getRequests();
+  if(reqs.length===0){ container.innerHTML = '<p class="placeholder">まだ要望はありません</p>'; return; }
+  var html = '';
+  reqs.forEach(function(r){
+    var d = new Date(r.ts);
+    var dateLabel = d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate();
+    html += '<div class="request-card"><p class="request-date">'+dateLabel+'</p><p class="request-text">'+escapeHtml(r.text)+'</p><button class="btn-link" onclick="removeRequest(\''+r._id+'\')">削除</button></div>';
+  });
+  container.innerHTML = html;
+}
+async function removeRequest(id){
+  if(!confirm('この要望を削除しますか?')) return;
+  await deleteRequest(id);
+  renderRequestsTab();
+}
+
+/* ---------------- coach: data management tab (capacity + CSV) ---------------- */
+async function renderDataManageTab(){
+  var container = document.getElementById('dataManageContent');
+  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var info = await getCapacityInfo();
+  var html = '<div class="stat-section"><p class="goal-intro">保存容量の目安</p>';
+  if(!info){
+    html += '<p class="hint">まだ記録がありません。</p>';
+  } else if(info.monthsRemaining <= 1.5){
+    html += '<div class="advice-card high"><p class="advice-title">容量にご注意ください</p><p class="advice-body">今のペースだと、残り容量が約'+info.monthsRemaining.toFixed(1)+'ヶ月分と推定されます(概算です)。CSVで記録を書き出して保存しておくことをおすすめします。</p></div>';
+  } else if(info.monthsRemaining <= 6){
+    html += '<div class="advice-card mid"><p class="advice-title">参考情報</p><p class="advice-body">今のペースでの推定残り容量は約'+Math.round(info.monthsRemaining)+'ヶ月分です(概算)。総記録数: '+info.totalRecords+'件</p></div>';
+  } else {
+    html += '<p class="hint">現在の蓄積ペースであれば、当面(概算で数年以上)容量の心配はありません。総記録数: '+info.totalRecords+'件</p>';
+  }
+  html += '</div>';
+  html += '<div class="stat-section"><p class="goal-intro">データの書き出し(CSV)</p>' +
+    '<p class="hint" style="margin-bottom:0.8rem;">ダウンロードしたCSVファイルは、パソコンに保存後、USBメモリなどへ手動でコピーしてください(ブラウザから直接USBへは書き出せません)。</p>' +
+    '<button class="btn-secondary" onclick="exportFatigueCSV()">疲労記録をCSVで書き出す</button>' +
+    '<button class="btn-secondary" onclick="exportTrainingCSV()">筋トレ記録をCSVで書き出す</button>' +
+  '</div>';
+  container.innerHTML = html;
 }
 </script>
 </body>
