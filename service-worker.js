@@ -1,4 +1,4 @@
-var CACHE_NAME = 'recovery-court-v2';
+var CACHE_NAME = 'recovery-court-v3';
 var SHELL_FILES = [
   '/',
   '/index.html',
@@ -27,7 +27,6 @@ self.addEventListener('activate', function(event){
 
 self.addEventListener('fetch', function(event){
   if(event.request.method !== 'GET') return;
-  // Never cache Firestore/Firebase network calls - always go to network for live data
   if(event.request.url.indexOf('firestore.googleapis.com') !== -1 ||
      event.request.url.indexOf('googleapis.com') !== -1){
     return;

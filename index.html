@@ -60,7 +60,7 @@
 
   .btn-primary{width:100%; border:none; background:var(--navy); color:var(--gold); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:16px; padding:15px; border-radius:10px; cursor:pointer; letter-spacing:0.03em;}
   .btn-primary:active{transform:scale(0.99);}
-  .btn-primary:disabled{opacity:0.6;}
+  .btn-primary:disabled{opacity:0.4; cursor:not-allowed;}
   .btn-secondary{width:100%; border:1px solid var(--hairline); background:var(--card); color:var(--ink); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px; padding:13px; border-radius:10px; cursor:pointer; margin-top:0.6rem;}
   .btn-link{background:none;border:none;color:var(--wood-dark); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13px; cursor:pointer; padding:0.5rem 0;}
 
@@ -98,21 +98,6 @@
   .top-bar .who{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px;}
   .top-bar .who span{color:var(--wood-dark);}
 
-  .q-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:1rem 1.1rem 1.15rem; margin-bottom:0.9rem;}
-  .q-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.55rem;}
-  .q-label{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14.5px;}
-  .q-val{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--wood-dark); font-weight:600;}
-  .q-scale{display:flex; justify-content:space-between; font-size:11px; color:#8A8574; margin-top:4px;}
-  input[type=range]{-webkit-appearance:none; width:100%; height:6px; border-radius:3px; background:linear-gradient(90deg, var(--teal), var(--gold) 50%, var(--red)); outline:none;}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:20px;height:20px;border-radius:50%; background:var(--navy); border:3px solid var(--paper); cursor:pointer;}
-  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%; background:var(--navy); border:3px solid var(--paper); cursor:pointer;}
-
-  .gauge-wrap{display:flex; align-items:center; gap:1.3rem; background:var(--navy); border-radius:12px; padding:1.3rem 1.2rem; margin-bottom:1rem;}
-  .gauge-text{color:var(--line);}
-  .gauge-eyebrow{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; color:rgba(242,236,221,0.6); margin:0 0 2px;}
-  .gauge-level{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:900; font-size:24px; margin:0 0 2px; line-height:1.1;}
-  .gauge-note{font-size:12.5px; color:rgba(242,236,221,0.75); margin:0;}
-
   .stat-row{display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1rem;}
   .stat-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.85rem 1rem;}
   .stat-label{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#8A8574; letter-spacing:0.06em; margin:0 0 2px;}
@@ -124,12 +109,6 @@
   .advice-card.high{border-left-color:var(--red);}
   .advice-title{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14.5px; margin:0 0 6px;}
   .advice-body{font-size:13.5px; color:#3A362D; margin:0;}
-  .light-menu{margin:0;padding:0;list-style:none;}
-  .light-menu li{font-size:13.5px; padding:6px 0; border-bottom:1px dashed var(--hairline); display:flex; gap:8px;}
-  .light-menu li:last-child{border-bottom:none;}
-  .light-menu li::before{content:"・"; color:var(--wood-dark); font-weight:700;}
-
-  .sent-note{display:flex; align-items:center; gap:8px; background:#EAF1EC; color:var(--teal-dark); border-radius:8px; padding:10px 12px; font-size:12.5px; font-weight:700; margin-bottom:1rem;}
 
   .goal-intro{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:15px; margin:0 0 0.9rem;}
   .goal-grid{display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1.4rem;}
@@ -156,8 +135,7 @@
   .team-advice .advice-title{color:var(--gold); margin:0 0 6px;}
   .team-advice p.advice-body{color:rgba(242,236,221,0.85);}
   .roster-list{list-style:none; margin:0; padding:0;}
-  .roster-row{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.8rem 1rem; margin-bottom:0.55rem; cursor:pointer;}
-  .roster-row:active{transform:scale(0.99);}
+  .roster-row{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.8rem 1rem; margin-bottom:0.55rem;}
   .status-dot{flex:0 0 auto; width:12px;height:12px;border-radius:50%;}
   .status-dot.low{background:var(--teal);}
   .status-dot.mid{background:var(--gold);}
@@ -170,13 +148,6 @@
   .badge-level.high{background:#F7E1E1; color:var(--red-dark);}
   .badge-level.none{background:#EFECE2; color:#8A8574;}
 
-  .history-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed var(--hairline);}
-  .history-row:last-child{border-bottom:none;}
-  .history-date{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#8A8574; width:78px; flex:0 0 auto;}
-  .history-bar-track{flex:1; height:8px; background:#EFEAE0; border-radius:4px; overflow:hidden;}
-  .history-bar-fill{height:100%; border-radius:4px;}
-  .history-score{font-family:'JetBrains Mono',monospace; font-size:11.5px; width:26px; text-align:right; flex:0 0 auto;}
-
   .manage-row{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.7rem 0.9rem; margin-bottom:0.55rem;}
   .manage-name{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:14px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .manage-btn{flex:0 0 auto; border:1px solid var(--hairline); background:var(--paper); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:12px; padding:7px 10px; border-radius:8px; cursor:pointer;}
@@ -186,8 +157,8 @@
   .stat-section:last-child{border-bottom:none;}
   .range-controls{display:flex; align-items:center; gap:8px; margin:0.6rem 0; flex-wrap:wrap;}
   .range-controls input[type=date]{width:auto; flex:1 1 120px;}
+  .range-controls select{margin:0;}
   .chart-wrap{position:relative; height:210px; margin:0.6rem 0;}
-  .metric-controls select{margin-bottom:0.2rem;}
   .trend-cards{display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-top:0.7rem;}
   .trend-card{border-radius:10px; padding:0.7rem 0.8rem; border:1px solid var(--hairline);}
   .trend-card.good{background:#EAF1EC;}
@@ -197,6 +168,14 @@
   .request-card{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.8rem 1rem; margin-bottom:0.55rem;}
   .request-date{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#8A8574; margin:0 0 4px;}
   .request-text{font-size:13.5px; margin:0 0 6px; white-space:pre-wrap;}
+
+  .shot-mode-picker{display:flex; gap:10px; margin-top:0.6rem;}
+  .shot-mode-picker button{flex:1;}
+  .shot-court-wrap{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.8rem; margin-bottom:0.8rem;}
+  .shot-result-buttons{display:flex; gap:10px; margin:0.9rem 0;}
+  .shot-result-buttons button{flex:1; font-size:15px;}
+  #shotInBtn{background:var(--teal); color:#fff;}
+  #shotMissBtn{background:var(--red); color:#fff;}
 </style>
 </head>
 <body>
@@ -204,9 +183,9 @@
 
   <div class="board">
     <span class="board-tag" id="whoTag">CONDITIONING ASSISTANT</span>
-    <p class="eyebrow">CONDITIONING ASSISTANT</p>
+    <p class="eyebrow">SHOOTING TRACKER</p>
     <h1 class="title">RECOVERY COURT</h1>
-    <p class="sub" id="boardSub">バスケ選手のための休息 &amp; 宅トレナビ</p>
+    <p class="sub" id="boardSub">バスケ選手のためのシュート記録 &amp; 宅トレナビ</p>
   </div>
 
   <div class="install-banner" id="installBanner">
@@ -214,14 +193,13 @@
     <button onclick="triggerInstall()">追加</button>
   </div>
 
-  <!-- SCREEN: ROLE SELECT -->
   <div class="screen active" id="screenRole">
     <div class="error-notice" id="connError">クラウドに接続できません。firebase-config.js の設定が正しいか確認してください。</div>
-    <div class="notice">選手はコンディションを記録、監督/トレーナーはチーム全体の状態を確認できます。選手の回答データは監督/トレーナーの画面(PIN保護)からのみ閲覧できます。</div>
+    <div class="notice">選手はシュートを記録、監督/トレーナーはチーム全体の傾向を確認できます。選手の記録データは監督/トレーナーの画面(PIN保護)からのみ閲覧できます。</div>
     <div class="role-grid">
       <div class="role-card" onclick="goPlayerSetup()">
         <div class="role-badge">P</div>
-        <div><p class="role-name">選手として記録する</p><p class="role-desc">今日のコンディションをチェックイン</p></div>
+        <div><p class="role-name">選手として記録する</p><p class="role-desc">今日のシュートをコートで記録</p></div>
       </div>
       <div class="role-card" onclick="goCoachPin()">
         <div class="role-badge">C</div>
@@ -236,7 +214,6 @@
     </div>
   </div>
 
-  <!-- SCREEN: PLAYER SETUP -->
   <div class="screen" id="screenPlayerSetup">
     <div class="field-card">
       <p class="field-label">名前を選ぶ</p>
@@ -254,73 +231,61 @@
     <button class="btn-secondary" onclick="showScreen('screenRole')">戻る</button>
   </div>
 
-  <!-- SCREEN: PLAYER APP -->
   <div class="screen" id="screenPlayerApp">
     <div class="top-bar">
       <p class="who">選手: <span id="currentPlayerLabel">-</span></p>
       <button class="btn-link" onclick="logoutPlayer()">切り替え</button>
     </div>
     <div class="tabs">
-      <button class="tab active" id="pTabBtn1" onclick="switchPlayerTab(1)"><span class="num">01</span>コンディション</button>
+      <button class="tab active" id="pTabBtn1" onclick="switchPlayerTab(1)"><span class="num">01</span>シュート記録</button>
       <button class="tab" id="pTabBtn2" onclick="switchPlayerTab(2)"><span class="num">02</span>宅トレ</button>
-      <button class="tab" id="pTabBtn3" onclick="switchPlayerTab(3)"><span class="num">03</span>筋トレ記録</button>
-      <button class="tab" id="pTabBtn4" onclick="switchPlayerTab(4)"><span class="num">04</span>自分の記録</button>
+      <button class="tab" id="pTabBtn3" onclick="switchPlayerTab(3)"><span class="num">03</span>自分の記録</button>
     </div>
 
     <div class="subpanel active" id="pPanel1" style="padding:1.6rem 1.5rem 0;">
-      <div class="q-card">
-        <div class="q-head"><span class="q-label">睡眠の質(昨夜)</span><span class="q-val" id="v1">3</span></div>
-        <input type="range" min="1" max="5" value="3" step="1" id="q1" oninput="updateVal(1)">
-        <div class="q-scale"><span>ぐっすり眠れた</span><span>ほとんど眠れず</span></div>
+      <div id="sessionStartPrompt">
+        <p class="goal-intro">今日は練習ですか、試合ですか?</p>
+        <div class="shot-mode-picker">
+          <button class="btn-primary" onclick="startShotSession('practice')">練習</button>
+          <button class="btn-primary" onclick="startShotSession('game')">試合</button>
+        </div>
       </div>
-      <div class="q-card">
-        <div class="q-head"><span class="q-label">筋肉の張り・痛み</span><span class="q-val" id="v2">3</span></div>
-        <input type="range" min="1" max="5" value="3" step="1" id="q2" oninput="updateVal(2)">
-        <div class="q-scale"><span>なし</span><span>強い痛み</span></div>
-      </div>
-      <div class="q-card">
-        <div class="q-head"><span class="q-label">直近の練習・試合強度</span><span class="q-val" id="v3">3</span></div>
-        <input type="range" min="1" max="5" value="3" step="1" id="q3" oninput="updateVal(3)">
-        <div class="q-scale"><span>軽め</span><span>非常に激しい</span></div>
-      </div>
-      <div class="q-card">
-        <div class="q-head"><span class="q-label">だるさ・やる気の低下</span><span class="q-val" id="v4">3</span></div>
-        <input type="range" min="1" max="5" value="3" step="1" id="q4" oninput="updateVal(4)">
-        <div class="q-scale"><span>なし</span><span>強く感じる</span></div>
-      </div>
-      <div class="q-card">
-        <div class="q-head"><span class="q-label">激しい練習/試合からの経過日数</span><span class="q-val" id="v5">3</span></div>
-        <input type="range" min="1" max="5" value="3" step="1" id="q5" oninput="updateVal(5)">
-        <div class="q-scale"><span>3日以上前</span><span>今日/昨日</span></div>
-      </div>
-      <button class="btn-primary" onclick="diagnose()" id="diagnoseBtn">診断して監督に送信</button>
 
-      <div id="result" style="display:none; margin-top:1.6rem;">
-        <div class="sent-note"><span>送信済み: この結果は監督/トレーナーのみ閲覧できます</span></div>
-        <div class="gauge-wrap">
-          <svg width="88" height="88" viewBox="0 0 88 88">
-            <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="9"/>
-            <circle id="gaugeArc" cx="44" cy="44" r="36" fill="none" stroke="#E7B23B" stroke-width="9" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226" transform="rotate(-90 44 44)"/>
-            <text id="gaugeScore" x="44" y="49" text-anchor="middle" font-family="Anton" font-size="22" fill="#F2ECDD">--</text>
+      <div id="shotSessionActive" style="display:none;">
+        <div class="top-bar" style="padding:0 0 0.8rem;">
+          <p class="who">記録中: <span id="sessionModeLabel"></span></p>
+          <button class="btn-link" onclick="cancelShotSession()">やり直す</button>
+        </div>
+
+        <p class="goal-intro" style="font-size:13px; margin-bottom:0.4rem;">1. エリアを選択</p>
+        <div class="shot-court-wrap">
+          <svg width="100%" viewBox="0 0 380 440">
+            <g fill="none" stroke="var(--hairline)">
+              <line x1="40" y1="380" x2="340" y2="380" stroke-width="1"/>
+              <line x1="40" y1="60" x2="40" y2="380" stroke-width="1"/>
+              <line x1="340" y1="60" x2="340" y2="380" stroke-width="1"/>
+              <rect x="140" y="270" width="100" height="110" stroke-width="1"/>
+              <circle cx="190" cy="270" r="45" stroke-width="0.5"/>
+              <line x1="175" y1="343" x2="205" y2="343" stroke-width="1.5"/>
+              <circle cx="190" cy="350" r="7" stroke-width="1"/>
+              <path d="M 170 370 A 20 20 0 0 1 210 370" stroke-width="0.5"/>
+              <path d="M 61 380 L 61 288 A 143 143 0 0 1 319 288 L 319 380" stroke-width="1"/>
+            </g>
+            <g id="shotPinsLayer"></g>
           </svg>
-          <div class="gauge-text">
-            <p class="gauge-eyebrow">FATIGUE LEVEL</p>
-            <p class="gauge-level" id="levelText">-</p>
-            <p class="gauge-note" id="levelNote">-</p>
-          </div>
         </div>
-        <div class="stat-row">
-          <div class="stat-card"><p class="stat-label">推奨睡眠時間</p><p class="stat-num" id="sleepHours">--<span>時間</span></p></div>
-          <div class="stat-card"><p class="stat-label">今日の推奨強度</p><p class="stat-num" id="intensityText" style="font-size:17px;">--</p></div>
+        <p class="hint" id="shotStatusLine" style="margin-bottom:1rem;">エリアを選択してください</p>
+
+        <p class="goal-intro" style="font-size:13px; margin-bottom:0.4rem;">2. シチュエーションを選択</p>
+        <div class="goal-grid" id="situationGrid" style="margin-bottom:0;"></div>
+
+        <p class="goal-intro" style="font-size:13px; margin:1rem 0 0.4rem;">3. 結果を記録</p>
+        <div class="shot-result-buttons">
+          <button id="shotInBtn" disabled onclick="recordShot('in')">IN</button>
+          <button id="shotMissBtn" disabled onclick="recordShot('miss')">MISS</button>
         </div>
-        <div class="advice-card" id="adviceCard">
-          <p class="advice-title" id="adviceTitle">過ごし方のアドバイス</p>
-          <p class="advice-body" id="adviceBody">-</p>
-        </div>
-        <div class="advice-card" style="border-left-color:var(--teal);">
-          <p class="advice-title">おすすめの軽い運動</p>
-          <ul class="light-menu" id="lightList"></ul>
-        </div>
+        <p class="hint">本日の合計: <span id="sessionTotals">0本 (0IN)</span></p>
+        <button class="btn-secondary" id="saveShotBtn" onclick="saveShotSession()">この記録を保存して終了</button>
       </div>
     </div>
 
@@ -331,16 +296,10 @@
     </div>
 
     <div class="subpanel" id="pPanel3" style="padding:1.6rem 1.5rem 0;">
-      <p class="goal-intro">今日の筋トレ記録</p>
-      <div id="strengthInputArea"><p class="placeholder">読み込み中...</p></div>
-    </div>
-
-    <div class="subpanel" id="pPanel4" style="padding:1.6rem 1.5rem 0;">
       <div id="myStatsContent"><p class="placeholder">読み込み中...</p></div>
     </div>
   </div>
 
-  <!-- SCREEN: COACH PIN -->
   <div class="screen" id="screenCoachPin">
     <div class="field-card">
       <p class="field-label" id="pinLabel">PINを入力してください</p>
@@ -352,7 +311,6 @@
     <p class="hint" style="margin-top:1rem;">※ このPINは同じチームの端末間で共有される簡易的なロックです。厳密なアカウント認証ではないため、完全な機密情報の保護には利用しないでください。</p>
   </div>
 
-  <!-- SCREEN: COACH DASHBOARD -->
   <div class="screen" id="screenCoachDash">
     <div class="capacity-banner" id="capacityBanner"></div>
     <div class="top-bar" style="padding:1rem 1.5rem 0;">
@@ -361,41 +319,35 @@
     </div>
     <div class="tabs" style="margin-top:1rem;">
       <button class="tab active" id="cTabBtn1" onclick="switchCoachTab(1)">概要</button>
-      <button class="tab" id="cTabBtn2" onclick="switchCoachTab(2)">疲労</button>
-      <button class="tab" id="cTabBtn3" onclick="switchCoachTab(3)">筋トレ</button>
-      <button class="tab" id="cTabBtn4" onclick="switchCoachTab(4)">要望</button>
-      <button class="tab" id="cTabBtn5" onclick="switchCoachTab(5)">データ管理</button>
+      <button class="tab" id="cTabBtn2" onclick="switchCoachTab(2)">シュート分析</button>
+      <button class="tab" id="cTabBtn3" onclick="switchCoachTab(3)">要望</button>
+      <button class="tab" id="cTabBtn4" onclick="switchCoachTab(4)">データ管理</button>
     </div>
 
     <div class="subpanel active" id="cPanel1" style="padding:1.6rem 1.5rem 0;">
       <div class="coach-stats" id="coachStats"></div>
       <div class="team-advice" id="teamAdvice"></div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-        <p class="goal-intro" style="margin-bottom:0;">選手一覧(今日の状態)</p>
+        <p class="goal-intro" style="margin-bottom:0;">選手一覧</p>
         <button class="btn-link" onclick="showScreen('screenCoachManage'); renderPlayerManage();">選手を管理</button>
       </div>
       <ul class="roster-list" id="rosterList"></ul>
     </div>
 
     <div class="subpanel" id="cPanel2" style="padding:1.6rem 1.5rem 0;">
-      <div id="coachFatigueContent"><p class="placeholder">読み込み中...</p></div>
+      <div id="coachShotContent"><p class="placeholder">読み込み中...</p></div>
     </div>
 
     <div class="subpanel" id="cPanel3" style="padding:1.6rem 1.5rem 0;">
-      <div id="coachStrengthContent"><p class="placeholder">読み込み中...</p></div>
-    </div>
-
-    <div class="subpanel" id="cPanel4" style="padding:1.6rem 1.5rem 0;">
       <p class="goal-intro">選手からの要望(匿名)</p>
       <div id="requestsList"><p class="placeholder">読み込み中...</p></div>
     </div>
 
-    <div class="subpanel" id="cPanel5" style="padding:1.6rem 1.5rem 0;">
+    <div class="subpanel" id="cPanel4" style="padding:1.6rem 1.5rem 0;">
       <div id="dataManageContent"><p class="placeholder">読み込み中...</p></div>
     </div>
   </div>
 
-  <!-- SCREEN: COACH PLAYER MANAGE -->
   <div class="screen" id="screenCoachManage">
     <div class="top-bar" style="padding:0 0 1rem;">
       <p class="who">選手管理</p>
@@ -403,17 +355,6 @@
     </div>
     <p class="hint" style="margin-bottom:1rem;">名前の修正や、退部した選手の削除ができます。削除時は記録データを残すかどうか選べます。</p>
     <ul class="roster-list" id="manageList"></ul>
-  </div>
-
-  <!-- SCREEN: COACH PLAYER DETAIL -->
-  <div class="screen" id="screenCoachDetail">
-    <div class="top-bar" style="padding:0 0 1rem;">
-      <p class="who" id="detailName">選手名</p>
-      <button class="btn-link" onclick="showScreen('screenCoachDash'); switchCoachTab(1);">一覧に戻る</button>
-    </div>
-    <div id="detailLatest"></div>
-    <p class="goal-intro" style="margin:1rem 0 0.6rem;">最近の記録</p>
-    <div id="detailHistory"></div>
   </div>
 
 </div>
@@ -444,11 +385,50 @@ window.addEventListener('appinstalled', function(){
 });
 
 /* ---------------- utility ---------------- */
+var svgNS = 'http://www.w3.org/2000/svg';
 function escapeHtml(s){
   if(s===null||s===undefined) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function todayStr(){ return new Date().toISOString().slice(0,10); }
+function pct(makes, attempts){ return attempts>0 ? Math.round(makes/attempts*100) : null; }
+
+/* ---------------- shot chart definitions ---------------- */
+var pins = [
+  {id:'paintL', x:155, y:320, name:'ペイント左', shortLabel:'左'},
+  {id:'paintC', x:190, y:335, name:'リム下', shortLabel:'リム'},
+  {id:'paintR', x:225, y:320, name:'ペイント右', shortLabel:'右'},
+  {id:'ft', x:190, y:270, name:'フリースロー', shortLabel:'FT'},
+  {id:'elbowL', x:150, y:245, name:'左肘(ミッド)', shortLabel:'左肘'},
+  {id:'midC', x:190, y:220, name:'ミッド中央', shortLabel:'中'},
+  {id:'elbowR', x:230, y:245, name:'右肘(ミッド)', shortLabel:'右肘'},
+  {id:'cornerL', x:55, y:350, name:'コーナー3左', shortLabel:'C3左'},
+  {id:'wingL', x:75, y:240, name:'ウィング3左', shortLabel:'W3左'},
+  {id:'top3', x:190, y:195, name:'トップ3', shortLabel:'T3'},
+  {id:'wingR', x:305, y:240, name:'ウィング3右', shortLabel:'W3右'},
+  {id:'cornerR', x:325, y:350, name:'コーナー3右', shortLabel:'C3右'}
+];
+var situations = ['スポット(静止)','キャッチ&シュート','プルアップ','移動しながら','ディフェンス付き','疲労時'];
+
+function courtLinesSVG(){
+  return '<g fill="none" stroke="#B4AFA0">' +
+    '<line x1="40" y1="380" x2="340" y2="380" stroke-width="1"/>' +
+    '<line x1="40" y1="60" x2="40" y2="380" stroke-width="1"/>' +
+    '<line x1="340" y1="60" x2="340" y2="380" stroke-width="1"/>' +
+    '<rect x="140" y="270" width="100" height="110" stroke-width="1"/>' +
+    '<circle cx="190" cy="270" r="45" stroke-width="0.5"/>' +
+    '<line x1="175" y1="343" x2="205" y2="343" stroke-width="1.5"/>' +
+    '<circle cx="190" cy="350" r="7" stroke-width="1"/>' +
+    '<path d="M 170 370 A 20 20 0 0 1 210 370" stroke-width="0.5"/>' +
+    '<path d="M 61 380 L 61 288 A 143 143 0 0 1 319 288 L 319 380" stroke-width="1"/>' +
+  '</g>';
+}
+function pinColorForPct(p){
+  if(p===null) return '#FFFFFF';
+  if(p < 35) return '#B33F3F';
+  if(p < 55) return '#E7B23B';
+  return '#3D7C72';
+}
 
 /* ---------------- cloud storage (Firestore) ---------------- */
 async function fsGetDoc(collection, id){
@@ -497,55 +477,29 @@ async function setCoachPinRemote(pin){
   await fsSetDoc('meta', 'coach', {pin:pin});
 }
 
-/* records (subcollections) */
-async function getFatigueRecords(playerId){
+/* shot sessions (subcollection) */
+async function getShotSessions(playerId){
   try{
-    var snap = await db.collection('players').doc(playerId).collection('fatigue_records').orderBy('ts').get();
+    var snap = await db.collection('players').doc(playerId).collection('shot_sessions').orderBy('ts').get();
     var arr = [];
     snap.forEach(function(doc){ var d=doc.data(); d._id=doc.id; arr.push(d); });
     return arr;
   }catch(e){ document.getElementById('connError').classList.add('show'); return []; }
 }
-async function getTrainingRecords(playerId){
+async function addShotSession(playerId, record){
   try{
-    var snap = await db.collection('players').doc(playerId).collection('training_records').orderBy('ts').get();
-    var arr = [];
-    snap.forEach(function(doc){ var d=doc.data(); d._id=doc.id; arr.push(d); });
-    return arr;
-  }catch(e){ document.getElementById('connError').classList.add('show'); return []; }
-}
-async function addFatigueRecord(playerId, record){
-  try{
-    await db.collection('players').doc(playerId).collection('fatigue_records').add(record);
-    bumpStats();
-    return true;
-  }catch(e){ document.getElementById('connError').classList.add('show'); return false; }
-}
-async function addTrainingRecord(playerId, record){
-  try{
-    await db.collection('players').doc(playerId).collection('training_records').add(record);
+    await db.collection('players').doc(playerId).collection('shot_sessions').add(record);
     bumpStats();
     return true;
   }catch(e){ document.getElementById('connError').classList.add('show'); return false; }
 }
 async function deleteAllPlayerRecords(id){
   try{
-    var fatSnap = await db.collection('players').doc(id).collection('fatigue_records').get();
+    var snap = await db.collection('players').doc(id).collection('shot_sessions').get();
     var deletes = [];
-    fatSnap.forEach(function(doc){ deletes.push(doc.ref.delete()); });
-    var trainSnap = await db.collection('players').doc(id).collection('training_records').get();
-    trainSnap.forEach(function(doc){ deletes.push(doc.ref.delete()); });
+    snap.forEach(function(doc){ deletes.push(doc.ref.delete()); });
     await Promise.all(deletes);
   }catch(e){}
-}
-
-/* exercise config */
-async function getExerciseConfig(){
-  var doc = await fsGetDoc('meta', 'exerciseConfig');
-  return (doc && doc.items) ? doc.items : [];
-}
-async function saveExerciseConfig(items){
-  await fsSetDoc('meta', 'exerciseConfig', {items:items});
 }
 
 /* requests (anonymous) */
@@ -580,16 +534,13 @@ async function bumpStats(){
 async function getCapacityInfo(){
   var statsDoc = await fsGetDoc('meta','stats');
   if(!statsDoc || !statsDoc.totalRecords) return null;
-  var items = await getExerciseConfig();
-  var bytesPerFatigue = 260;
-  var bytesPerTraining = 90 + items.length*20;
-  var avgBytes = (bytesPerFatigue + bytesPerTraining) / 2;
-  var totalBytes = statsDoc.totalRecords * avgBytes;
+  var bytesPerSession = 3000;
+  var totalBytes = statsDoc.totalRecords * bytesPerSession;
   var capacityBytes = 1 * 1024 * 1024 * 1024;
   var usedPct = totalBytes / capacityBytes * 100;
   var daysSinceFirst = Math.max(1, (Date.now() - statsDoc.firstRecordTs) / 86400000);
   var recordsPerDay = statsDoc.totalRecords / daysSinceFirst;
-  var bytesPerDay = recordsPerDay * avgBytes;
+  var bytesPerDay = recordsPerDay * bytesPerSession;
   var remainingBytes = capacityBytes - totalBytes;
   var daysRemaining = bytesPerDay > 0 ? remainingBytes / bytesPerDay : Infinity;
   var monthsRemaining = daysRemaining / 30;
@@ -611,34 +562,20 @@ function downloadCSV(filename, rows){
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
-async function exportFatigueCSV(){
+async function exportShotCSV(){
   var roster = await loadRoster();
-  var rows = [['選手名','日付','合計スコア','レベル','質問1','質問2','質問3','質問4','質問5']];
+  var rows = [['選手名','日付','練習/試合','エリア','シチュエーション','結果']];
   for(var i=0;i<roster.length;i++){
-    var recs = await getFatigueRecords(roster[i].id);
-    recs.forEach(function(r){
-      var s = r.scores || [];
-      rows.push([roster[i].name, r.date, r.total, r.level, s[0],s[1],s[2],s[3],s[4]]);
-    });
-  }
-  downloadCSV('疲労記録_'+todayStr()+'.csv', rows);
-}
-async function exportTrainingCSV(){
-  var roster = await loadRoster();
-  var items = await getExerciseConfig();
-  var header = ['選手名','日付'].concat(items.map(function(it){ return it.name+'('+it.unit+')'; }));
-  var rows = [header];
-  for(var i=0;i<roster.length;i++){
-    var recs = await getTrainingRecords(roster[i].id);
-    recs.forEach(function(r){
-      var row = [roster[i].name, r.date];
-      items.forEach(function(it){
-        row.push(r.values && r.values[it.id]!==undefined ? r.values[it.id] : '');
+    var sessions = await getShotSessions(roster[i].id);
+    sessions.forEach(function(sess){
+      var modeLabel = sess.mode==='practice' ? '練習' : '試合';
+      sess.attempts.forEach(function(a){
+        var pinDef = pins.find(function(p){ return p.id===a.pinId; });
+        rows.push([roster[i].name, sess.date, modeLabel, pinDef?pinDef.name:a.pinId, a.situation, a.result==='in'?'IN':'MISS']);
       });
-      rows.push(row);
     });
   }
-  downloadCSV('筋トレ記録_'+todayStr()+'.csv', rows);
+  downloadCSV('シュート記録_'+todayStr()+'.csv', rows);
 }
 
 /* ---------------- screens ---------------- */
@@ -649,7 +586,7 @@ function showScreen(id){
 
 async function goPlayerSetup(){
   document.getElementById('whoTag').textContent = 'PLAYER MODE';
-  document.getElementById('boardSub').textContent = '今日のコンディションを記録しよう';
+  document.getElementById('boardSub').textContent = '今日のシュートを記録しよう';
   var roster = await loadRoster();
   var sel = document.getElementById('rosterSelect');
   sel.innerHTML = '<option value="">-- 登録済みの選手を選択 --</option>';
@@ -683,8 +620,6 @@ async function startPlayerSession(){
     return;
   }
   document.getElementById('currentPlayerLabel').textContent = currentPlayer.name;
-  document.getElementById('result').style.display = 'none';
-  document.getElementById('whoTag').textContent = 'PLAYER MODE';
   renderGoalGrid();
   switchPlayerTab(1);
   showScreen('screenPlayerApp');
@@ -693,20 +628,15 @@ function logoutPlayer(){
   currentPlayer = null;
   showScreen('screenRole');
   document.getElementById('whoTag').textContent = 'CONDITIONING ASSISTANT';
-  document.getElementById('boardSub').textContent = 'バスケ選手のための休息 & 宅トレナビ';
+  document.getElementById('boardSub').textContent = 'バスケ選手のためのシュート記録 & 宅トレナビ';
 }
-
 function switchPlayerTab(n){
-  for(var i=1;i<=4;i++){
+  for(var i=1;i<=3;i++){
     document.getElementById('pPanel'+i).classList.toggle('active', i===n);
     document.getElementById('pTabBtn'+i).classList.toggle('active', i===n);
   }
-  if(n===3){ renderStrengthInputTab(); }
-  if(n===4){ renderMyStats(); }
-}
-
-function updateVal(i){
-  document.getElementById('v'+i).textContent = document.getElementById('q'+i).value;
+  if(n===1){ resetShotSessionUI(); }
+  if(n===3){ renderMyStats(); }
 }
 
 /* ---------------- anonymous request box (top page) ---------------- */
@@ -721,75 +651,7 @@ async function sendRequest(){
   if(ok){ alert('送信しました。ご協力ありがとうございます。'); el.value=''; }
 }
 
-/* ---------------- fatigue calc ---------------- */
-function computeFatigue(total){
-  var out = {};
-  if(total <= 11){
-    out = {level:'低 (絶好調)', note:'コンディション良好', color:'#3D7C72', levelKey:'low',
-      sleepMin:7, sleepMax:8, intensity:'通常通り',
-      adviceTitle:'通常メニューで問題なし',
-      adviceBody:'疲労は軽度です。普段通りの練習強度で問題ありません。ウォームアップとクールダウンは丁寧に行い、疲労を溜めないようにしましょう。',
-      lightItems:['練習前後の動的ストレッチ 5分','軽いジョギング(ウォームアップ) 5分','練習後のクールダウン+静的ストレッチ 10分'],
-      cardClass:''};
-  } else if(total <= 17){
-    out = {level:'中 (要注意)', note:'疲労が蓄積ぎみ', color:'#E7B23B', levelKey:'mid',
-      sleepMin:8, sleepMax:9, intensity:'70%程度に調整',
-      adviceTitle:'アクティブレストを推奨',
-      adviceBody:'疲労が蓄積してきています。今日は練習強度を普段の7割程度に落とし、軽い有酸素運動とストレッチで血流を促す「アクティブレスト」を取り入れましょう。無理な追い込みは避けてください。',
-      lightItems:['ウォーキング 15〜20分','軽めのジョギング(息が上がらない程度) 10分','フォームローラー・ストレッチ 10分','入浴で身体を温める'],
-      cardClass:'mid'};
-  } else {
-    out = {level:'高 (要休養)', note:'オーバーワーク注意', color:'#B33F3F', levelKey:'high',
-      sleepMin:9, sleepMax:10, intensity:'完全休養推奨',
-      adviceTitle:'今日は完全休養を',
-      adviceBody:'疲労度がかなり高い状態です。ケガのリスクが上がるため、今日はコートに立つ練習は控え、完全休養を優先してください。睡眠時間を増やし、必要であれば20分程度の昼寝も有効です。',
-      lightItems:['軽いストレッチのみ(痛みが出ない範囲で)','ぬるめのお風呂でリラックス','水分・タンパク質をしっかり補給','スマホ・PCの使用を控えて早めに就寝'],
-      cardClass:'high'};
-  }
-  out.total = total;
-  return out;
-}
-
-async function diagnose(){
-  var scores = [];
-  for(var i=1;i<=5;i++){ scores.push(parseInt(document.getElementById('q'+i).value,10)); }
-  var total = scores.reduce(function(a,b){return a+b;},0);
-  var res = computeFatigue(total);
-  var pct = (total-5)/20;
-  var circumference = 2*Math.PI*36;
-  var offset = circumference*(1-pct);
-
-  var arc = document.getElementById('gaugeArc');
-  arc.setAttribute('stroke-dashoffset', offset.toFixed(1));
-  arc.setAttribute('stroke', res.color);
-  document.getElementById('gaugeScore').textContent = total;
-  document.getElementById('levelText').textContent = res.level;
-  document.getElementById('levelNote').textContent = res.note;
-  document.getElementById('sleepHours').innerHTML = res.sleepMin+"〜"+res.sleepMax+"<span>時間</span>";
-  document.getElementById('intensityText').textContent = res.intensity;
-
-  var adviceCard = document.getElementById('adviceCard');
-  adviceCard.className = 'advice-card' + (res.cardClass ? ' '+res.cardClass : '');
-  document.getElementById('adviceTitle').textContent = res.adviceTitle;
-  document.getElementById('adviceBody').textContent = res.adviceBody;
-
-  var list = document.getElementById('lightList');
-  list.innerHTML = '';
-  res.lightItems.forEach(function(t){
-    var li = document.createElement('li'); li.textContent = t; list.appendChild(li);
-  });
-  document.getElementById('result').style.display = 'block';
-
-  var btn = document.getElementById('diagnoseBtn');
-  btn.disabled = true; btn.textContent = '送信中...';
-
-  var record = {date:todayStr(), ts:Date.now(), scores:scores, total:total, levelKey:res.levelKey, level:res.level};
-  await addFatigueRecord(currentPlayer.id, record);
-
-  btn.disabled = false; btn.textContent = '診断して監督に送信';
-}
-
-/* ---------------- home training menu (bodyweight, high-school safe) ---------------- */
+/* ---------------- home training menu (unchanged, bodyweight, high-school safe) ---------------- */
 var goals = [
   {id:'jump', icon:'01', name:'ジャンプ力', desc:'跳躍力・爆発力',
     exercises:[
@@ -853,43 +715,178 @@ function selectGoal(id){
   area.innerHTML = html;
 }
 
-/* ---------------- player: strength training input ---------------- */
-async function renderStrengthInputTab(){
-  var container = document.getElementById('strengthInputArea');
-  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
-  var items = await getExerciseConfig();
-  if(items.length===0){
-    container.innerHTML = '<p class="placeholder">監督が筋トレ項目を設定すると、ここに入力欄が表示されます。</p>';
-    return;
-  }
-  var html = '';
-  items.forEach(function(it){
-    html += '<div class="q-card"><div class="q-head"><span class="q-label">'+escapeHtml(it.name)+(it.unit? ' ('+escapeHtml(it.unit)+')':'')+'</span></div>' +
-      '<input type="number" step="any" inputmode="decimal" id="strIn_'+it.id+'" placeholder="今日の記録(未入力でもOK)">' +
-      '</div>';
-  });
-  html += '<button class="btn-primary" onclick="submitTraining()" id="submitTrainingBtn">今日の記録を保存</button>';
-  container.innerHTML = html;
+/* ---------------- player: shot recording tab ---------------- */
+var currentSession = null;
+var currentShotPin = null;
+var currentShotSituation = null;
+
+function resetShotSessionUI(){
+  currentSession = null;
+  currentShotPin = null;
+  currentShotSituation = null;
+  document.getElementById('sessionStartPrompt').style.display = 'block';
+  document.getElementById('shotSessionActive').style.display = 'none';
 }
-async function submitTraining(){
-  var items = await getExerciseConfig();
-  var values = {};
-  var anyEntered = false;
-  items.forEach(function(it){
-    var el = document.getElementById('strIn_'+it.id);
-    if(el && el.value !== ''){ values[it.id] = Number(el.value); anyEntered = true; }
+function startShotSession(mode){
+  currentSession = {mode:mode, attempts:[]};
+  document.getElementById('sessionStartPrompt').style.display = 'none';
+  document.getElementById('shotSessionActive').style.display = 'block';
+  document.getElementById('sessionModeLabel').textContent = mode==='practice' ? '練習' : '試合';
+  renderShotCourtPins();
+  renderSituationChips();
+  updateShotStatus();
+}
+function cancelShotSession(){
+  if(currentSession && currentSession.attempts.length>0){
+    if(!confirm('ここまでの記録を破棄してやり直しますか?')) return;
+  }
+  resetShotSessionUI();
+}
+function renderShotCourtPins(){
+  var layer = document.getElementById('shotPinsLayer');
+  if(!layer) return;
+  layer.innerHTML = '';
+  pins.forEach(function(p){
+    var sel = currentShotPin === p.id;
+    var attemptsForPin = currentSession.attempts.filter(function(a){ return a.pinId===p.id; });
+    var makes = attemptsForPin.filter(function(a){ return a.result==='in'; }).length;
+    var g = document.createElementNS(svgNS,'g');
+    g.setAttribute('style','cursor:pointer;');
+    var circle = document.createElementNS(svgNS,'circle');
+    circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y); circle.setAttribute('r', sel ? 12 : 9);
+    circle.setAttribute('fill', attemptsForPin.length>0 ? '#E7B23B' : '#FFFFFF');
+    circle.setAttribute('stroke', sel ? '#C77D33' : '#D8D3C4');
+    circle.setAttribute('stroke-width', sel ? 2.5 : 1);
+    g.appendChild(circle);
+    var txt = document.createElementNS(svgNS,'text');
+    txt.setAttribute('x', p.x); txt.setAttribute('y', p.y);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','central');
+    txt.setAttribute('font-size','9'); txt.setAttribute('fill','#1B1712');
+    txt.textContent = attemptsForPin.length>0 ? (makes+'/'+attemptsForPin.length) : '';
+    g.appendChild(txt);
+    var lbl = document.createElementNS(svgNS,'text');
+    lbl.setAttribute('x', p.x + (p.x<190?-12:(p.x>190?12:0)));
+    lbl.setAttribute('y', p.y-14);
+    lbl.setAttribute('text-anchor', p.x<190?'end':(p.x>190?'start':'middle'));
+    lbl.setAttribute('font-size','9'); lbl.setAttribute('fill','#8A8574');
+    lbl.textContent = p.shortLabel;
+    g.appendChild(lbl);
+    g.addEventListener('click', function(){ currentShotPin = p.id; renderShotCourtPins(); updateShotStatus(); });
+    layer.appendChild(g);
   });
-  if(!anyEntered){ alert('少なくとも1項目は入力してください。'); return; }
-  var btn = document.getElementById('submitTrainingBtn');
+}
+function renderSituationChips(){
+  var grid = document.getElementById('situationGrid');
+  grid.innerHTML = '';
+  situations.forEach(function(s){
+    var card = document.createElement('div');
+    card.className = 'goal-card' + (currentShotSituation===s ? ' selected' : '');
+    card.style.cursor = 'pointer';
+    card.style.padding = '0.7rem 0.5rem';
+    card.innerHTML = '<p class="goal-name" style="margin:0; font-size:12.5px; text-align:center;">'+escapeHtml(s)+'</p>';
+    card.addEventListener('click', function(){ currentShotSituation = s; renderSituationChips(); updateShotStatus(); });
+    grid.appendChild(card);
+  });
+}
+function updateShotStatus(){
+  var ready = currentShotPin && currentShotSituation;
+  document.getElementById('shotInBtn').disabled = !ready;
+  document.getElementById('shotMissBtn').disabled = !ready;
+  var line = document.getElementById('shotStatusLine');
+  if(!currentShotPin){
+    line.textContent = 'エリアを選択してください';
+  } else {
+    var p = pins.find(function(x){ return x.id===currentShotPin; });
+    line.textContent = currentShotSituation ? (p.name+' / '+currentShotSituation) : (p.name+'(シチュエーション未選択)');
+  }
+  var total = currentSession.attempts.length;
+  var makes = currentSession.attempts.filter(function(a){ return a.result==='in'; }).length;
+  document.getElementById('sessionTotals').textContent = total+'本 ('+makes+'IN)';
+}
+function recordShot(result){
+  if(!currentShotPin || !currentShotSituation) return;
+  currentSession.attempts.push({pinId:currentShotPin, situation:currentShotSituation, result:result});
+  renderShotCourtPins();
+  updateShotStatus();
+}
+async function saveShotSession(){
+  if(!currentSession || currentSession.attempts.length===0){ alert('まだ記録がありません。'); return; }
+  var btn = document.getElementById('saveShotBtn');
   btn.disabled = true; btn.textContent = '保存中...';
-  var record = {date:todayStr(), ts:Date.now(), values:values};
-  await addTrainingRecord(currentPlayer.id, record);
-  btn.disabled = false; btn.textContent = '今日の記録を保存';
-  alert('記録を保存しました。');
-  items.forEach(function(it){ var el=document.getElementById('strIn_'+it.id); if(el) el.value=''; });
+  var record = {date:todayStr(), ts:Date.now(), mode:currentSession.mode, attempts:currentSession.attempts};
+  await addShotSession(currentPlayer.id, record);
+  btn.disabled = false; btn.textContent = 'この記録を保存して終了';
+  alert('保存しました。');
+  resetShotSessionUI();
 }
 
-/* ---------------- shared: charts / date-range ---------------- */
+/* ---------------- shared: aggregation helpers ---------------- */
+function aggregatePinStats(sessions, modeFilter, situationFilter, dateStart, dateEnd){
+  var stats = {};
+  sessions.forEach(function(sess){
+    if(dateStart && sess.date < dateStart) return;
+    if(dateEnd && sess.date > dateEnd) return;
+    if(modeFilter && modeFilter!=='all' && sess.mode!==modeFilter) return;
+    sess.attempts.forEach(function(a){
+      if(situationFilter && situationFilter!=='all' && a.situation!==situationFilter) return;
+      if(!stats[a.pinId]) stats[a.pinId] = {makes:0, attempts:0};
+      stats[a.pinId].attempts++;
+      if(a.result==='in') stats[a.pinId].makes++;
+    });
+  });
+  return stats;
+}
+function extractSeries(sessions, pinId, modeFilter, situationFilter){
+  var byDate = {};
+  sessions.forEach(function(sess){
+    if(modeFilter && modeFilter!=='all' && sess.mode!==modeFilter) return;
+    sess.attempts.forEach(function(a){
+      if(pinId && a.pinId!==pinId) return;
+      if(situationFilter && situationFilter!=='all' && a.situation!==situationFilter) return;
+      if(!byDate[sess.date]) byDate[sess.date] = {makes:0, attempts:0, ts:sess.ts};
+      byDate[sess.date].attempts++;
+      if(a.result==='in') byDate[sess.date].makes++;
+    });
+  });
+  return Object.keys(byDate).sort().map(function(d){
+    var v = byDate[d];
+    return {date:d, ts:v.ts, value: v.attempts ? Math.round(v.makes/v.attempts*100) : 0, attempts:v.attempts};
+  });
+}
+function paintPinsOnCourt(layerEl, stats){
+  layerEl.innerHTML = '';
+  pins.forEach(function(p){
+    var s = stats[p.id];
+    var attempts = s ? s.attempts : 0;
+    var p2 = attempts>0 ? pct(s.makes, s.attempts) : null;
+    var g = document.createElementNS(svgNS,'g');
+    g.setAttribute('style','cursor:pointer;');
+    g.setAttribute('data-pin', p.id);
+    var circle = document.createElementNS(svgNS,'circle');
+    circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y); circle.setAttribute('r', 10);
+    circle.setAttribute('fill', pinColorForPct(p2));
+    circle.setAttribute('fill-opacity', attempts>0 ? 0.85 : 1);
+    circle.setAttribute('stroke', '#8F551C');
+    circle.setAttribute('stroke-width', 0.5);
+    g.appendChild(circle);
+    var txt = document.createElementNS(svgNS,'text');
+    txt.setAttribute('x', p.x); txt.setAttribute('y', p.y);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','central');
+    txt.setAttribute('font-size','9'); txt.setAttribute('fill', attempts>0 ? '#FFFFFF' : '#8A8574');
+    txt.textContent = attempts>0 ? p2+'%' : '-';
+    g.appendChild(txt);
+    var lbl = document.createElementNS(svgNS,'text');
+    lbl.setAttribute('x', p.x + (p.x<190?-13:(p.x>190?13:0)));
+    lbl.setAttribute('y', p.y-14);
+    lbl.setAttribute('text-anchor', p.x<190?'end':(p.x>190?'start':'middle'));
+    lbl.setAttribute('font-size','9'); lbl.setAttribute('fill','#8A8574');
+    lbl.textContent = p.shortLabel;
+    g.appendChild(lbl);
+    layerEl.appendChild(g);
+  });
+}
+
+/* ---------------- shared: charts / date-range (reused by self stats and coach analysis) ---------------- */
 var chartInstances = {};
 var rangeRedrawFns = {};
 function renderLineChart(canvasId, series, label, color){
@@ -914,7 +911,7 @@ function renderLineChart(canvasId, series, label, color){
       responsive:true,
       maintainAspectRatio:false,
       plugins:{ legend:{display:false} },
-      scales:{ x:{ ticks:{ maxRotation:45, minRotation:45, font:{size:9} } }, y:{ beginAtZero:false } }
+      scales:{ x:{ ticks:{ maxRotation:45, minRotation:45, font:{size:9} } }, y:{ beginAtZero:true, max:100 } }
     }
   });
 }
@@ -946,67 +943,59 @@ function getRange(prefix){
   var e = document.getElementById(prefix+'End');
   return { start: s && s.value ? s.value : null, end: e && e.value ? e.value : null };
 }
+function computeTrendExtremes(perPlayerSeries, playerNames){
+  var cutoff = Date.now() - 30*86400000;
+  var results = [];
+  Object.keys(perPlayerSeries).forEach(function(pid){
+    var recent = perPlayerSeries[pid].filter(function(r){ return r.ts>=cutoff; }).sort(function(a,b){return a.ts-b.ts;});
+    if(recent.length>=2){
+      var delta = recent[recent.length-1].value - recent[0].value;
+      results.push({pid:pid, name:playerNames[pid], delta:delta});
+    }
+  });
+  if(results.length===0) return null;
+  results.sort(function(a,b){ return b.delta - a.delta; });
+  return { best: results[0], worst: results[results.length-1] };
+}
 
-/* ---------------- player: my stats (personal graphs) ---------------- */
-var selfFatigueSeries = [];
-var selfExSeriesMap = {};
+/* ---------------- player: my stats (personal shot chart) ---------------- */
+var selfSessions = [];
 async function renderMyStats(){
   var container = document.getElementById('myStatsContent');
   container.innerHTML = '<p class="placeholder">読み込み中...</p>';
-  var fatigueRecs = await getFatigueRecords(currentPlayer.id);
-  var trainingRecs = await getTrainingRecords(currentPlayer.id);
-  var items = await getExerciseConfig();
-
-  var html = '<div class="stat-section"><p class="goal-intro">疲労スコアの推移</p>' +
-    dateRangeControlsHtml('selfFatigue') +
-    '<div class="chart-wrap"><canvas id="selfFatigueChart"></canvas></div></div>';
-
-  items.forEach(function(it){
-    html += '<div class="stat-section"><p class="goal-intro">'+escapeHtml(it.name)+'の推移'+(it.unit?'('+escapeHtml(it.unit)+')':'')+'</p>' +
-      dateRangeControlsHtml('selfEx_'+it.id) +
-      '<div class="chart-wrap"><canvas id="selfExChart_'+it.id+'"></canvas></div></div>';
-  });
-  if(items.length===0){
-    html += '<p class="hint">監督が筋トレ項目を設定すると、ここに記録グラフが表示されます。</p>';
+  var sessions = await getShotSessions(currentPlayer.id);
+  if(sessions.length===0){
+    container.innerHTML = '<p class="placeholder">まだ記録がありません。「シュート記録」タブから記録してみましょう。</p>';
+    return;
   }
+  selfSessions = sessions;
+  var html = '<div class="stat-section"><p class="goal-intro">エリア別の成績(全期間)</p>' +
+    '<div class="chart-wrap" style="height:300px;"><svg width="100%" viewBox="0 0 380 440">' + courtLinesSVG() + '<g id="selfHeatmapPins"></g></svg></div></div>';
+  html += '<div class="stat-section"><p class="goal-intro">エリアを選んで推移を見る</p>' +
+    '<select id="selfAreaSelect" onchange="drawSelfAreaTrend()"><option value="">全エリア(総合FG%)</option>' +
+    pins.map(function(p){ return '<option value="'+p.id+'">'+p.name+'</option>'; }).join('') +
+    '</select>' +
+    dateRangeControlsHtml('selfShot') +
+    '<div class="chart-wrap"><canvas id="selfShotChart"></canvas></div></div>';
   container.innerHTML = html;
-
-  selfFatigueSeries = fatigueRecs.map(function(r){ return {date:r.date, ts:r.ts, value:r.total}; });
-  selfExSeriesMap = {};
-  items.forEach(function(it){
-    selfExSeriesMap[it.id] = trainingRecs
-      .filter(function(r){ return r.values && r.values[it.id]!==undefined && r.values[it.id]!==null && r.values[it.id]!==''; })
-      .map(function(r){ return {date:r.date, ts:r.ts, value:Number(r.values[it.id])}; });
-  });
-
-  rangeRedrawFns['selfFatigue'] = drawSelfFatigueChart;
-  items.forEach(function(it){
-    rangeRedrawFns['selfEx_'+it.id] = function(){ drawSelfExChart(it.id); };
-  });
-
-  drawSelfFatigueChart();
-  items.forEach(function(it){ drawSelfExChart(it.id); });
-
-  if(fatigueRecs.length===0 && trainingRecs.length===0){
-    container.innerHTML = '<p class="placeholder">まだ記録がありません。コンディションチェックや筋トレ記録を入力すると、ここにグラフが表示されます。</p>';
-  }
+  var overallStats = aggregatePinStats(selfSessions, 'all', 'all', null, null);
+  paintPinsOnCourt(document.getElementById('selfHeatmapPins'), overallStats);
+  rangeRedrawFns['selfShot'] = drawSelfAreaTrend;
+  drawSelfAreaTrend();
 }
-function drawSelfFatigueChart(){
-  var r = getRange('selfFatigue');
-  var filtered = filterByRange(selfFatigueSeries, r.start, r.end);
-  renderLineChart('selfFatigueChart', filtered, '疲労スコア', '#E7B23B');
-}
-function drawSelfExChart(itemId){
-  var r = getRange('selfEx_'+itemId);
-  var filtered = filterByRange(selfExSeriesMap[itemId]||[], r.start, r.end);
-  renderLineChart('selfExChart_'+itemId, filtered, itemId, '#3D7C72');
+function drawSelfAreaTrend(){
+  var areaId = document.getElementById('selfAreaSelect').value || null;
+  var series = extractSeries(selfSessions, areaId, 'all', 'all');
+  var r = getRange('selfShot');
+  var filtered = filterByRange(series, r.start, r.end);
+  renderLineChart('selfShotChart', filtered, 'FG%', '#3D7C72');
 }
 
 /* ---------------- coach: pin gate ---------------- */
 var pendingIsSetup = false;
 async function goCoachPin(){
   document.getElementById('whoTag').textContent = 'COACH MODE';
-  document.getElementById('boardSub').textContent = 'チームのコンディションを確認';
+  document.getElementById('boardSub').textContent = 'チームのシュート傾向を確認';
   var pin = await getCoachPin();
   document.getElementById('pinInput').value = '';
   if(pin){
@@ -1044,23 +1033,17 @@ function enterCoachDashboard(){
 function logoutCoach(){
   showScreen('screenRole');
   document.getElementById('whoTag').textContent = 'CONDITIONING ASSISTANT';
-  document.getElementById('boardSub').textContent = 'バスケ選手のための休息 & 宅トレナビ';
+  document.getElementById('boardSub').textContent = 'バスケ選手のためのシュート記録 & 宅トレナビ';
 }
-
 function switchCoachTab(n){
-  for(var i=1;i<=5;i++){
+  for(var i=1;i<=4;i++){
     document.getElementById('cPanel'+i).classList.toggle('active', i===n);
     document.getElementById('cTabBtn'+i).classList.toggle('active', i===n);
   }
-  if(n===2){
-    document.getElementById('coachFatigueContent').innerHTML = metricSectionHtml('coachFatigue','疲労スコアの推移(チーム)');
-    loadMetricData('coachFatigue', function(r){return {date:r.date, ts:r.ts, value:r.total};}, true, '疲労スコア', '#E7B23B', getFatigueRecords);
-  }
-  if(n===3){ renderCoachStrengthTab(); }
-  if(n===4){ renderRequestsTab(); }
-  if(n===5){ renderDataManageTab(); }
+  if(n===2){ renderCoachShotTab(); }
+  if(n===3){ renderRequestsTab(); }
+  if(n===4){ renderDataManageTab(); }
 }
-
 async function checkCapacityBanner(){
   var info = await getCapacityInfo();
   var el = document.getElementById('capacityBanner');
@@ -1079,37 +1062,45 @@ async function renderDashboard(){
   var roster = await loadRoster();
   var today = todayStr();
   var players = [];
+  var teamStatsAll = {makes:0, attempts:0};
   for(var i=0;i<roster.length;i++){
-    var recs = await getFatigueRecords(roster[i].id);
-    var latest = recs.length ? recs[recs.length-1] : null;
-    players.push({id:roster[i].id, name:roster[i].name, latest:latest, isToday: latest ? latest.date===today : false});
+    var sessions = await getShotSessions(roster[i].id);
+    var hasToday = sessions.some(function(s){ return s.date===today; });
+    var stats = aggregatePinStats(sessions, 'all', 'all', null, null);
+    var makes=0, attempts=0;
+    Object.keys(stats).forEach(function(k){ makes+=stats[k].makes; attempts+=stats[k].attempts; });
+    teamStatsAll.makes += makes; teamStatsAll.attempts += attempts;
+    var worstPin = null, worstPct = 101;
+    Object.keys(stats).forEach(function(k){
+      if(stats[k].attempts>=3){
+        var pv = pct(stats[k].makes, stats[k].attempts);
+        if(pv<worstPct){ worstPct=pv; worstPin=k; }
+      }
+    });
+    players.push({id:roster[i].id, name:roster[i].name, hasToday:hasToday, fg:pct(makes,attempts), attempts:attempts});
   }
   lastLoadedPlayers = players;
 
-  var checkedInToday = players.filter(function(p){ return p.isToday; });
-  var avgTotal = checkedInToday.length ? (checkedInToday.reduce(function(s,p){return s+p.latest.total;},0)/checkedInToday.length) : null;
-  var highCount = checkedInToday.filter(function(p){ return p.latest.levelKey==='high'; }).length;
+  var checkedInToday = players.filter(function(p){ return p.hasToday; });
+  var teamFg = pct(teamStatsAll.makes, teamStatsAll.attempts);
 
   var statsEl = document.getElementById('coachStats');
   statsEl.innerHTML =
-    '<div class="stat-card"><p class="stat-label">本日回答</p><p class="stat-num">'+checkedInToday.length+'<span>/'+players.length+'人</span></p></div>' +
-    '<div class="stat-card"><p class="stat-label">平均疲労スコア</p><p class="stat-num">'+(avgTotal!==null ? avgTotal.toFixed(1) : '--')+'</p></div>' +
-    '<div class="stat-card"><p class="stat-label">要注意(高)人数</p><p class="stat-num">'+highCount+'<span>人</span></p></div>';
+    '<div class="stat-card"><p class="stat-label">本日記録</p><p class="stat-num">'+checkedInToday.length+'<span>/'+players.length+'人</span></p></div>' +
+    '<div class="stat-card"><p class="stat-label">チーム全体FG%</p><p class="stat-num">'+(teamFg!==null?teamFg:'--')+'<span>%</span></p></div>' +
+    '<div class="stat-card"><p class="stat-label">総試投数</p><p class="stat-num">'+teamStatsAll.attempts+'<span>本</span></p></div>';
 
   var adviceEl = document.getElementById('teamAdvice');
   var title, body;
-  if(checkedInToday.length===0){
-    title = 'まだ本日の回答がありません';
-    body = '選手にコンディションチェックの入力を促してください。';
-  } else if(avgTotal > 17 || highCount >= Math.ceil(players.length/3)){
-    title = 'チーム全体の疲労度が高めです';
-    body = '要注意・要休養の選手が多くなっています。今日の全体練習は強度を落とし、個別に休養を優先する選手を確認してください。';
-  } else if(avgTotal > 11){
-    title = 'やや疲労が蓄積しています';
-    body = 'チーム平均は中程度の疲労です。アップ・ダウンを丁寧に行い、負荷の高いメニューは調整を検討してください。';
+  if(teamStatsAll.attempts===0){
+    title = 'まだ記録がありません';
+    body = '選手にシュート記録の入力を促してください。';
+  } else if(teamFg!==null && teamFg<40){
+    title = 'チーム全体の確率が低めです';
+    body = 'シュート練習の頻度や、シュートフォームの確認を検討してください。「シュート分析」タブで苦手なエリアを確認できます。';
   } else {
-    title = 'チームのコンディションは良好です';
-    body = '通常通りの強度で練習を行って問題ない状態です。';
+    title = 'チームの記録が蓄積されています';
+    body = '「シュート分析」タブでエリアごとの傾向を確認できます。';
   }
   adviceEl.innerHTML = '<p class="advice-title">'+title+'</p><p class="advice-body">'+body+'</p>';
 
@@ -1120,59 +1111,16 @@ async function renderDashboard(){
   }
   listEl.innerHTML = '';
   players.forEach(function(p){
-    var dotClass = 'none', badgeText = '未回答';
-    if(p.isToday){ dotClass = p.latest.levelKey; badgeText = p.latest.level; }
-    else if(p.latest){ dotClass = 'none'; badgeText = '直近:'+p.latest.date; }
+    var badgeText = p.hasToday ? '本日記録あり' : (p.attempts>0 ? '通算FG% '+p.fg+'%' : '未記録');
+    var dotClass = p.hasToday ? 'low' : (p.attempts>0 ? 'none' : 'none');
     var row = document.createElement('li');
     row.className = 'roster-row';
-    row.onclick = function(){ showPlayerDetail(p.id); };
     row.innerHTML =
       '<span class="status-dot '+dotClass+'"></span>' +
       '<span class="roster-name">'+escapeHtml(p.name)+'</span>' +
-      '<span class="badge-level '+ (p.isToday?p.latest.levelKey:'none') +'">'+escapeHtml(badgeText)+'</span>';
+      '<span class="badge-level none">'+escapeHtml(badgeText)+'</span>';
     listEl.appendChild(row);
   });
-}
-
-async function showPlayerDetail(id){
-  var p = lastLoadedPlayers.find(function(x){ return x.id===id; });
-  if(!p) return;
-  document.getElementById('detailName').textContent = p.name;
-  var latestEl = document.getElementById('detailLatest');
-  latestEl.innerHTML = '<p class="placeholder">読み込み中...</p>';
-  showScreen('screenCoachDetail');
-
-  var recs = await getFatigueRecords(id);
-  var latest = recs.length ? recs[recs.length-1] : null;
-  if(latest){
-    var res = computeFatigue(latest.total);
-    latestEl.innerHTML =
-      '<div class="stat-row">' +
-      '<div class="stat-card"><p class="stat-label">直近スコア('+latest.date+')</p><p class="stat-num">'+latest.total+'<span>/25</span></p></div>' +
-      '<div class="stat-card"><p class="stat-label">レベル</p><p class="stat-num" style="font-size:16px;">'+latest.level+'</p></div>' +
-      '</div>' +
-      '<div class="advice-card '+res.cardClass+'"><p class="advice-title">推奨対応</p><p class="advice-body">'+res.adviceBody+'</p></div>';
-  } else {
-    latestEl.innerHTML = '<p class="placeholder">まだ記録がありません</p>';
-  }
-
-  var histEl = document.getElementById('detailHistory');
-  if(recs.length){
-    var rows = recs.slice().reverse().slice(0,14);
-    var html = '';
-    var colorMap = {low:'#3D7C72', mid:'#E7B23B', high:'#B33F3F'};
-    rows.forEach(function(r){
-      var widthPct = Math.round((r.total/25)*100);
-      html += '<div class="history-row">' +
-        '<span class="history-date">'+r.date+'</span>' +
-        '<span class="history-bar-track"><span class="history-bar-fill" style="width:'+widthPct+'%; background:'+colorMap[r.levelKey]+';"></span></span>' +
-        '<span class="history-score">'+r.total+'</span>' +
-        '</div>';
-    });
-    histEl.innerHTML = html;
-  } else {
-    histEl.innerHTML = '<p class="placeholder">記録がありません</p>';
-  }
 }
 
 /* ---------------- coach: player management ---------------- */
@@ -1222,18 +1170,117 @@ async function deletePlayerFlow(id, name){
   renderPlayerManage();
 }
 
-/* ---------------- coach: metric sections (shared by fatigue & strength tabs) ---------------- */
-var coachSeriesCache = {};
-function metricSectionHtml(prefix, title){
-  return '<div class="stat-section">' +
-    '<p class="goal-intro">'+escapeHtml(title)+'</p>' +
-    '<div class="metric-controls"><select id="'+prefix+'PlayerSelect" onchange="onMetricPlayerChange(\''+prefix+'\')">' +
-      '<option value="">チーム平均</option>' +
-    '</select></div>' +
-    dateRangeControlsHtml(prefix) +
-    '<div class="chart-wrap"><canvas id="'+prefix+'Chart"></canvas></div>' +
-    '<div class="trend-cards" id="'+prefix+'Trend"></div>' +
-  '</div>';
+/* ---------------- coach: shot analysis tab ---------------- */
+var coachAllData = null;
+var coachFilters = {mode:'all', player:'', situation:'all'};
+var coachSelectedPin = null;
+
+async function renderCoachShotTab(){
+  var container = document.getElementById('coachShotContent');
+  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
+  var roster = await loadRoster();
+  coachAllData = {};
+  for(var i=0;i<roster.length;i++){
+    coachAllData[roster[i].id] = {name: roster[i].name, sessions: await getShotSessions(roster[i].id)};
+  }
+  coachFilters = {mode:'all', player:'', situation:'all'};
+  coachSelectedPin = null;
+
+  var html = '<div class="stat-section">' +
+    '<div class="range-controls">' +
+      '<select id="coachModeFilter" onchange="onCoachFilterChange()">' +
+        '<option value="all">全て(練習+試合)</option><option value="practice">練習のみ</option><option value="game">試合のみ</option>' +
+      '</select>' +
+    '</div>' +
+    '<div class="range-controls">' +
+      '<select id="coachSituationFilter" onchange="onCoachFilterChange()">' +
+        '<option value="all">全シチュエーション</option>' +
+        situations.map(function(s){ return '<option value="'+escapeHtml(s)+'">'+escapeHtml(s)+'</option>'; }).join('') +
+      '</select>' +
+    '</div>' +
+    '<div class="range-controls">' +
+      '<select id="coachPlayerFilter" onchange="onCoachFilterChange()">' +
+        '<option value="">チーム平均</option>' +
+        roster.map(function(p){ return '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>'; }).join('') +
+      '</select>' +
+    '</div>' +
+    '<div class="chart-wrap" style="height:300px;"><svg width="100%" viewBox="0 0 380 440">' + courtLinesSVG() + '<g id="coachHeatmapPins"></g></svg></div>' +
+    '<p class="hint">エリアのピンをタップすると、そのエリアの推移と選手比較を表示します。</p>' +
+  '</div>' +
+  '<div class="stat-section" id="coachPinDetail"></div>';
+  container.innerHTML = html;
+  renderCoachHeatmap();
+}
+function onCoachFilterChange(){
+  coachFilters.mode = document.getElementById('coachModeFilter').value;
+  coachFilters.situation = document.getElementById('coachSituationFilter').value;
+  coachFilters.player = document.getElementById('coachPlayerFilter').value;
+  renderCoachHeatmap();
+  if(coachSelectedPin){ renderCoachPinDetail(coachSelectedPin); }
+}
+function getFilteredSessionsForStats(){
+  if(coachFilters.player){
+    return coachAllData[coachFilters.player] ? coachAllData[coachFilters.player].sessions : [];
+  }
+  var merged = [];
+  Object.keys(coachAllData).forEach(function(pid){
+    merged = merged.concat(coachAllData[pid].sessions);
+  });
+  return merged;
+}
+function renderCoachHeatmap(){
+  var sessions = getFilteredSessionsForStats();
+  var stats = aggregatePinStats(sessions, coachFilters.mode, coachFilters.situation, null, null);
+  var layer = document.getElementById('coachHeatmapPins');
+  paintPinsOnCourt(layer, stats);
+  Array.prototype.forEach.call(layer.children, function(g, idx){
+    g.addEventListener('click', function(){
+      coachSelectedPin = pins[idx].id;
+      renderCoachHeatmap();
+      renderCoachPinDetail(coachSelectedPin);
+    });
+    if(pins[idx].id === coachSelectedPin){
+      g.querySelector('circle').setAttribute('stroke-width', 2.5);
+      g.querySelector('circle').setAttribute('stroke', '#152036');
+    }
+  });
+}
+function renderCoachPinDetail(pinId){
+  var pinDef = pins.find(function(p){ return p.id===pinId; });
+  var detailEl = document.getElementById('coachPinDetail');
+  var seriesLabel = pinDef.name;
+  var color = '#3D7C72';
+
+  var perPlayerSeries = {};
+  var playerNames = {};
+  Object.keys(coachAllData).forEach(function(pid){
+    playerNames[pid] = coachAllData[pid].name;
+    perPlayerSeries[pid] = extractSeries(coachAllData[pid].sessions, pinId, coachFilters.mode, coachFilters.situation)
+      .map(function(s){ return {date:s.date, ts:s.ts, value:s.value}; });
+  });
+  var teamSeries = buildDateAverageSeries(perPlayerSeries);
+  var extremes = computeTrendExtremes(perPlayerSeries, playerNames);
+
+  var html = '<p class="goal-intro">'+escapeHtml(seriesLabel)+'の推移</p>' +
+    '<select id="coachPinPlayerSelect" onchange="drawCoachPinChart()"><option value="">チーム平均</option>' +
+    Object.keys(coachAllData).map(function(pid){ return '<option value="'+pid+'">'+escapeHtml(playerNames[pid])+'</option>'; }).join('') +
+    '</select>' +
+    dateRangeControlsHtml('coachPin') +
+    '<div class="chart-wrap"><canvas id="coachPinChart"></canvas></div>' +
+    '<div class="trend-cards">';
+  if(extremes){
+    html += '<div class="trend-card good"><p class="trend-label">最も伸びた(直近1か月)</p><p class="trend-name">'+escapeHtml(extremes.best.name)+'</p></div>' +
+      '<div class="trend-card bad"><p class="trend-label">最も下がった(直近1か月)</p><p class="trend-name">'+escapeHtml(extremes.worst.name)+'</p></div>';
+  } else {
+    html += '<p class="hint">直近1か月のデータがまだ十分にありません。</p>';
+  }
+  html += '</div>';
+  detailEl.innerHTML = html;
+
+  coachPinTeamSeries = teamSeries;
+  coachPinPerPlayerSeries = perPlayerSeries;
+  rangeRedrawFns['coachPin'] = drawCoachPinChart;
+  drawCoachPinChart();
 }
 function buildDateAverageSeries(perPlayerSeries){
   var byDate = {};
@@ -1247,133 +1294,18 @@ function buildDateAverageSeries(perPlayerSeries){
   return dates.map(function(d){
     var vals = byDate[d];
     var avg = vals.reduce(function(a,b){return a+b;},0)/vals.length;
-    return {date:d, value:avg};
+    return {date:d, value:Math.round(avg)};
   });
 }
-function computeTrendExtremes(perPlayerSeries, playerNames, lowerIsBetter){
-  var cutoff = Date.now() - 30*86400000;
-  var results = [];
-  Object.keys(perPlayerSeries).forEach(function(pid){
-    var recent = perPlayerSeries[pid].filter(function(r){ return r.ts>=cutoff; }).sort(function(a,b){return a.ts-b.ts;});
-    if(recent.length>=2){
-      var delta = recent[recent.length-1].value - recent[0].value;
-      results.push({pid:pid, name:playerNames[pid], delta:delta});
-    }
-  });
-  if(results.length===0) return null;
-  results.sort(function(a,b){ return b.delta - a.delta; });
-  var maxDelta = results[0];
-  var minDelta = results[results.length-1];
-  if(lowerIsBetter){
-    return { best:minDelta, worst:maxDelta };
-  } else {
-    return { best:maxDelta, worst:minDelta };
-  }
-}
-async function loadMetricData(prefix, extractFn, lowerIsBetter, label, color, recordFetcher){
-  var roster = await loadRoster();
-  var perPlayerSeries = {};
-  var playerNames = {};
-  for(var i=0;i<roster.length;i++){
-    var recs = await recordFetcher(roster[i].id);
-    playerNames[roster[i].id] = roster[i].name;
-    perPlayerSeries[roster[i].id] = recs.map(extractFn).filter(function(x){return x!==null;});
-  }
-  var teamSeries = buildDateAverageSeries(perPlayerSeries);
-  coachSeriesCache[prefix] = {perPlayerSeries:perPlayerSeries, teamSeries:teamSeries, playerNames:playerNames, lowerIsBetter:lowerIsBetter, label:label, color:color};
-
-  var sel = document.getElementById(prefix+'PlayerSelect');
-  if(sel){
-    sel.innerHTML = '<option value="">チーム平均</option>';
-    roster.forEach(function(p){
-      var opt = document.createElement('option');
-      opt.value = p.id; opt.textContent = p.name;
-      sel.appendChild(opt);
-    });
-  }
-
-  rangeRedrawFns[prefix] = function(){ drawMetricChart(prefix); };
-  renderTrendCards(prefix);
-  drawMetricChart(prefix);
-}
-function onMetricPlayerChange(prefix){ drawMetricChart(prefix); }
-function drawMetricChart(prefix){
-  var cache = coachSeriesCache[prefix];
-  if(!cache) return;
-  var sel = document.getElementById(prefix+'PlayerSelect');
+var coachPinTeamSeries = [];
+var coachPinPerPlayerSeries = {};
+function drawCoachPinChart(){
+  var sel = document.getElementById('coachPinPlayerSelect');
   var pid = sel ? sel.value : '';
-  var series = pid ? (cache.perPlayerSeries[pid]||[]) : cache.teamSeries;
-  var r = getRange(prefix);
+  var series = pid ? (coachPinPerPlayerSeries[pid]||[]) : coachPinTeamSeries;
+  var r = getRange('coachPin');
   var filtered = filterByRange(series, r.start, r.end);
-  renderLineChart(prefix+'Chart', filtered, cache.label, cache.color);
-}
-function renderTrendCards(prefix){
-  var cache = coachSeriesCache[prefix];
-  var el = document.getElementById(prefix+'Trend');
-  if(!el || !cache) return;
-  var extremes = computeTrendExtremes(cache.perPlayerSeries, cache.playerNames, cache.lowerIsBetter);
-  if(!extremes){
-    el.innerHTML = '<p class="hint">直近1か月のデータがまだ十分にありません。</p>';
-    return;
-  }
-  var improvedLabel = cache.lowerIsBetter ? '最も改善(直近1か月)' : '最も伸びた(直近1か月)';
-  var worsenedLabel = cache.lowerIsBetter ? '最も悪化(直近1か月)' : '最も下がった(直近1か月)';
-  el.innerHTML =
-    '<div class="trend-card good"><p class="trend-label">'+improvedLabel+'</p><p class="trend-name">'+escapeHtml(extremes.best.name)+'</p></div>' +
-    '<div class="trend-card bad"><p class="trend-label">'+worsenedLabel+'</p><p class="trend-name">'+escapeHtml(extremes.worst.name)+'</p></div>';
-}
-
-/* ---------------- coach: strength tab (item settings + graphs) ---------------- */
-async function renderCoachStrengthTab(){
-  var container = document.getElementById('coachStrengthContent');
-  container.innerHTML = '<p class="placeholder">読み込み中...</p>';
-  var items = await getExerciseConfig();
-  var html = renderStrengthManageHtml(items);
-  items.forEach(function(it){
-    html += metricSectionHtml('coachEx_'+it.id, it.name+'の推移(チーム)');
-  });
-  container.innerHTML = html;
-  items.forEach(function(it){
-    loadMetricData('coachEx_'+it.id, function(r){
-      if(!r.values || r.values[it.id]===undefined || r.values[it.id]===null || r.values[it.id]==='') return null;
-      return {date:r.date, ts:r.ts, value:Number(r.values[it.id])};
-    }, false, it.name, '#3D7C72', getTrainingRecords);
-  });
-}
-function renderStrengthManageHtml(items){
-  var html = '<div class="stat-section"><p class="goal-intro">筋トレ項目の設定</p><ul class="manage-list">';
-  if(items.length===0){
-    html += '<p class="hint">まだ項目がありません。下から追加してください。</p>';
-  }
-  items.forEach(function(it){
-    html += '<li class="manage-row"><span class="manage-name">'+escapeHtml(it.name)+(it.unit?'('+escapeHtml(it.unit)+')':'')+'</span><button class="manage-btn danger" onclick="removeExerciseItem(\''+it.id+'\')">削除</button></li>';
-  });
-  html += '</ul>' +
-    '<div class="field-card">' +
-    '<p class="field-label">新しい項目を追加</p>' +
-    '<input type="text" id="newExName" placeholder="例: ベンチプレス" style="margin-bottom:8px;">' +
-    '<input type="text" id="newExUnit" placeholder="単位(例: kg, 回, cm, 秒)">' +
-    '</div>' +
-    '<button class="btn-secondary" onclick="addExerciseItem()">追加する</button>' +
-  '</div>';
-  return html;
-}
-async function addExerciseItem(){
-  var name = document.getElementById('newExName').value.trim();
-  var unit = document.getElementById('newExUnit').value.trim();
-  if(!name){ alert('項目名を入力してください。'); return; }
-  var items = await getExerciseConfig();
-  var id = 'ex_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-  items.push({id:id, name:name, unit: unit || ''});
-  await saveExerciseConfig(items);
-  renderCoachStrengthTab();
-}
-async function removeExerciseItem(id){
-  if(!confirm('この項目を削除しますか?(過去の記録データ自体は残りますが、入力欄やグラフには出なくなります)')) return;
-  var items = await getExerciseConfig();
-  items = items.filter(function(it){ return it.id!==id; });
-  await saveExerciseConfig(items);
-  renderCoachStrengthTab();
+  renderLineChart('coachPinChart', filtered, 'FG%', '#3D7C72');
 }
 
 /* ---------------- coach: requests tab ---------------- */
@@ -1407,15 +1339,14 @@ async function renderDataManageTab(){
   } else if(info.monthsRemaining <= 1.5){
     html += '<div class="advice-card high"><p class="advice-title">容量にご注意ください</p><p class="advice-body">今のペースだと、残り容量が約'+info.monthsRemaining.toFixed(1)+'ヶ月分と推定されます(概算です)。CSVで記録を書き出して保存しておくことをおすすめします。</p></div>';
   } else if(info.monthsRemaining <= 6){
-    html += '<div class="advice-card mid"><p class="advice-title">参考情報</p><p class="advice-body">今のペースでの推定残り容量は約'+Math.round(info.monthsRemaining)+'ヶ月分です(概算)。総記録数: '+info.totalRecords+'件</p></div>';
+    html += '<div class="advice-card mid"><p class="advice-title">参考情報</p><p class="advice-body">今のペースでの推定残り容量は約'+Math.round(info.monthsRemaining)+'ヶ月分です(概算)。総セッション数: '+info.totalRecords+'件</p></div>';
   } else {
-    html += '<p class="hint">現在の蓄積ペースであれば、当面(概算で数年以上)容量の心配はありません。総記録数: '+info.totalRecords+'件</p>';
+    html += '<p class="hint">現在の蓄積ペースであれば、当面(概算で数年以上)容量の心配はありません。総セッション数: '+info.totalRecords+'件</p>';
   }
   html += '</div>';
   html += '<div class="stat-section"><p class="goal-intro">データの書き出し(CSV)</p>' +
     '<p class="hint" style="margin-bottom:0.8rem;">ダウンロードしたCSVファイルは、パソコンに保存後、USBメモリなどへ手動でコピーしてください(ブラウザから直接USBへは書き出せません)。</p>' +
-    '<button class="btn-secondary" onclick="exportFatigueCSV()">疲労記録をCSVで書き出す</button>' +
-    '<button class="btn-secondary" onclick="exportTrainingCSV()">筋トレ記録をCSVで書き出す</button>' +
+    '<button class="btn-secondary" onclick="exportShotCSV()">シュート記録をCSVで書き出す</button>' +
   '</div>';
   container.innerHTML = html;
 }
