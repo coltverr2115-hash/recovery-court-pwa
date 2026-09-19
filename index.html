@@ -179,6 +179,16 @@
   #shotInBtn{background:var(--teal); color:#fff;}
   #shotMissBtn{background:var(--red); color:#fff;}
   .undo-row{display:flex; justify-content:flex-end; margin-top:-0.4rem; margin-bottom:0.6rem;}
+  .entry-input-row{display:flex; gap:10px; align-items:flex-end; margin-bottom:0.8rem;}
+  .entry-input-col{flex:1;}
+  .entry-input-col label{display:block; font-size:11px; color:#8A8574; margin-bottom:4px;}
+  .entry-row{display:flex; justify-content:space-between; align-items:center; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:0.65rem 0.85rem; margin-bottom:0.5rem;}
+  .entry-main{font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700; font-size:13px; margin:0 0 2px;}
+  .entry-sub{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#8A8574; margin:0;}
+
+  .date-strip{display:flex; gap:8px; overflow-x:auto; padding:0.3rem 0.1rem 0.7rem; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
+  .date-chip{flex:0 0 auto; scroll-snap-align:center; border:1px solid var(--hairline); background:var(--card); color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600; padding:9px 14px; border-radius:20px; cursor:pointer; white-space:nowrap;}
+  .date-chip.selected{background:var(--navy); color:var(--gold); border-color:var(--navy);}
 
   .breakdown-list{list-style:none; margin:0; padding:0;}
   .breakdown-row{display:flex; align-items:center; gap:10px; padding:7px 0;}
@@ -297,12 +307,13 @@
         <p class="goal-intro" style="font-size:13px; margin-bottom:0.4rem;">2. シチュエーションを選択</p>
         <div class="goal-grid" id="situationGrid" style="margin-bottom:0;"></div>
 
-        <p class="goal-intro" style="font-size:13px; margin:1rem 0 0.4rem;">3. 結果を記録</p>
-        <div class="shot-result-buttons">
-          <button id="shotInBtn" disabled onclick="recordShot('in')">IN</button>
-          <button id="shotMissBtn" disabled onclick="recordShot('miss')">MISS</button>
+        <p class="goal-intro" style="font-size:13px; margin:1rem 0 0.4rem;">3. 本数を入力して追加</p>
+        <div class="entry-input-row">
+          <div class="entry-input-col"><label>試投数</label><input type="number" min="1" id="entryAttempts" placeholder="例: 10"></div>
+          <div class="entry-input-col"><label>成功数</label><input type="number" min="0" id="entryMakes" placeholder="例: 7"></div>
         </div>
-        <div class="undo-row"><button class="btn-link" onclick="undoLastShot()">直前の1本を取り消す</button></div>
+        <button class="btn-secondary" id="addEntryBtn" disabled onclick="addShotEntry()" style="margin-top:0;">この内容を追加</button>
+        <div id="entryList" style="margin-top:0.9rem;"></div>
         <p class="hint">本日の合計: <span id="sessionTotals">0本 (0IN)</span></p>
         <button class="btn-secondary" id="saveShotBtn" onclick="saveShotSession()">この記録を保存して終了</button>
       </div>
@@ -597,14 +608,14 @@ function downloadCSV(filename, rows){
 }
 async function exportShotCSV(){
   var roster = await loadRoster();
-  var rows = [['選手名','日付','練習/試合','エリア','シチュエーション','結果']];
+  var rows = [['選手名','日付','練習/試合','エリア','シチュエーション','試投数','成功数','成功率']];
   for(var i=0;i<roster.length;i++){
     var sessions = await getShotSessions(roster[i].id);
     sessions.forEach(function(sess){
       var modeLabel = sess.mode==='practice' ? '練習' : '試合';
-      sess.attempts.forEach(function(a){
-        var pinDef = pins.find(function(p){ return p.id===a.pinId; });
-        rows.push([roster[i].name, sess.date, modeLabel, pinDef?pinDef.name:a.pinId, a.situation, a.result==='in'?'IN':'MISS']);
+      sess.entries.forEach(function(e){
+        var pinDef = pins.find(function(p){ return p.id===e.pinId; });
+        rows.push([roster[i].name, sess.date, modeLabel, pinDef?pinDef.name:e.pinId, e.situation, e.attempts, e.makes, pct(e.makes,e.attempts)+'%']);
       });
     });
   }
@@ -768,7 +779,7 @@ function selectGoal(id){
   area.innerHTML = html;
 }
 
-/* ---------------- player: shot recording tab ---------------- */
+/* ---------------- player: shot recording tab (batch entry input) ---------------- */
 var currentSession = null;
 var currentShotPin = null;
 var currentShotSituation = null;
@@ -781,19 +792,28 @@ function resetShotSessionUI(){
   document.getElementById('shotSessionActive').style.display = 'none';
 }
 function startShotSession(mode){
-  currentSession = {mode:mode, attempts:[]};
+  currentSession = {mode:mode, entries:[]};
   document.getElementById('sessionStartPrompt').style.display = 'none';
   document.getElementById('shotSessionActive').style.display = 'block';
   document.getElementById('sessionModeLabel').textContent = mode==='practice' ? '練習' : '試合';
   renderShotCourtPins();
   renderSituationChips();
+  renderEntryList();
   updateShotStatus();
 }
 function cancelShotSession(){
-  if(currentSession && currentSession.attempts.length>0){
+  if(currentSession && currentSession.entries.length>0){
     if(!confirm('ここまでの記録を破棄してやり直しますか?')) return;
   }
   resetShotSessionUI();
+}
+function pinTotalsFromEntries(entries, pinId){
+  var attempts=0, makes=0;
+  entries.forEach(function(e){
+    if(e.pinId!==pinId) return;
+    attempts += e.attempts; makes += e.makes;
+  });
+  return {attempts:attempts, makes:makes};
 }
 function renderShotCourtPins(){
   var layer = document.getElementById('shotPinsLayer');
@@ -801,13 +821,12 @@ function renderShotCourtPins(){
   layer.innerHTML = '';
   pins.forEach(function(p){
     var sel = currentShotPin === p.id;
-    var attemptsForPin = currentSession.attempts.filter(function(a){ return a.pinId===p.id; });
-    var makes = attemptsForPin.filter(function(a){ return a.result==='in'; }).length;
+    var t = pinTotalsFromEntries(currentSession.entries, p.id);
     var g = document.createElementNS(svgNS,'g');
     g.setAttribute('style','cursor:pointer;');
     var circle = document.createElementNS(svgNS,'circle');
     circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y); circle.setAttribute('r', sel ? 12 : 9);
-    circle.setAttribute('fill', attemptsForPin.length>0 ? '#E7B23B' : '#FFFFFF');
+    circle.setAttribute('fill', t.attempts>0 ? '#E7B23B' : '#FFFFFF');
     circle.setAttribute('stroke', sel ? '#C77D33' : '#D8D3C4');
     circle.setAttribute('stroke-width', sel ? 2.5 : 1);
     g.appendChild(circle);
@@ -815,7 +834,7 @@ function renderShotCourtPins(){
     txt.setAttribute('x', p.x); txt.setAttribute('y', p.y);
     txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','central');
     txt.setAttribute('font-size','9'); txt.setAttribute('fill','#1B1712');
-    txt.textContent = attemptsForPin.length>0 ? (makes+'/'+attemptsForPin.length) : '';
+    txt.textContent = t.attempts>0 ? (t.makes+'/'+t.attempts) : '';
     g.appendChild(txt);
     var lbl = document.createElementNS(svgNS,'text');
     lbl.setAttribute('x', p.x + (p.x<190?-12:(p.x>190?12:0)));
@@ -843,8 +862,8 @@ function renderSituationChips(){
 }
 function updateShotStatus(){
   var ready = currentShotPin && currentShotSituation;
-  document.getElementById('shotInBtn').disabled = !ready;
-  document.getElementById('shotMissBtn').disabled = !ready;
+  var addBtn = document.getElementById('addEntryBtn');
+  if(addBtn) addBtn.disabled = !ready;
   var line = document.getElementById('shotStatusLine');
   if(!currentShotPin){
     line.textContent = 'エリアを選択してください';
@@ -852,36 +871,63 @@ function updateShotStatus(){
     var p = pins.find(function(x){ return x.id===currentShotPin; });
     line.textContent = currentShotSituation ? (p.name+' / '+currentShotSituation) : (p.name+'(シチュエーション未選択)');
   }
-  var total = currentSession.attempts.length;
-  var makes = currentSession.attempts.filter(function(a){ return a.result==='in'; }).length;
-  document.getElementById('sessionTotals').textContent = total+'本 ('+makes+'IN)';
+  var totalAttempts=0, totalMakes=0;
+  currentSession.entries.forEach(function(e){ totalAttempts+=e.attempts; totalMakes+=e.makes; });
+  document.getElementById('sessionTotals').textContent = totalAttempts+'本 ('+totalMakes+'IN)';
 }
-function recordShot(result){
+function addShotEntry(){
   if(!currentShotPin || !currentShotSituation) return;
-  currentSession.attempts.push({pinId:currentShotPin, situation:currentShotSituation, result:result});
+  var attemptsEl = document.getElementById('entryAttempts');
+  var makesEl = document.getElementById('entryMakes');
+  var attempts = parseInt(attemptsEl.value, 10);
+  var makes = parseInt(makesEl.value, 10);
+  if(!attempts || attempts<=0){ alert('試投数を入力してください。'); return; }
+  if(isNaN(makes) || makes<0){ makes = 0; }
+  if(makes>attempts){ alert('成功数が試投数を超えています。'); return; }
+  currentSession.entries.push({pinId:currentShotPin, situation:currentShotSituation, attempts:attempts, makes:makes});
+  attemptsEl.value = '';
+  makesEl.value = '';
   renderShotCourtPins();
+  renderEntryList();
   updateShotStatus();
 }
-function undoLastShot(){
-  if(!currentSession || currentSession.attempts.length===0) return;
-  currentSession.attempts.pop();
+function removeShotEntry(idx){
+  currentSession.entries.splice(idx, 1);
   renderShotCourtPins();
+  renderEntryList();
   updateShotStatus();
+}
+function renderEntryList(){
+  var el = document.getElementById('entryList');
+  if(!el) return;
+  if(currentSession.entries.length===0){
+    el.innerHTML = '<p class="hint">まだ追加された記録はありません。</p>';
+    return;
+  }
+  el.innerHTML = currentSession.entries.map(function(e, idx){
+    var pinDef = pins.find(function(p){ return p.id===e.pinId; });
+    return '<div class="entry-row">' +
+      '<div><p class="entry-main">'+escapeHtml(pinDef.name)+' / '+escapeHtml(e.situation)+'</p>' +
+      '<p class="entry-sub">'+e.makes+'/'+e.attempts+' ('+pct(e.makes,e.attempts)+'%)</p></div>' +
+      '<button class="manage-btn danger" onclick="removeShotEntry('+idx+')">削除</button>' +
+    '</div>';
+  }).join('');
 }
 async function saveShotSession(){
-  if(!currentSession || currentSession.attempts.length===0){ alert('まだ記録がありません。'); return; }
+  if(!currentSession || currentSession.entries.length===0){ alert('まだ記録がありません。'); return; }
   var btn = document.getElementById('saveShotBtn');
   btn.disabled = true; btn.textContent = '保存中...';
   if(currentSession.editingId){
-    var record = {date:currentSession.date, ts:currentSession.ts, mode:currentSession.mode, attempts:currentSession.attempts};
+    var record = {date:currentSession.date, ts:currentSession.ts, mode:currentSession.mode, entries:currentSession.entries};
     await updateShotSession(currentPlayer.id, currentSession.editingId, record);
   } else {
-    var record2 = {date:todayStr(), ts:Date.now(), mode:currentSession.mode, attempts:currentSession.attempts};
+    var record2 = {date:todayStr(), ts:Date.now(), mode:currentSession.mode, entries:currentSession.entries};
     await addShotSession(currentPlayer.id, record2);
   }
   btn.disabled = false; btn.textContent = 'この記録を保存して終了';
   alert('保存しました。');
   resetShotSessionUI();
+  renderMyStats();
 }
 function editShotSessionById(sessionId){
   var session = selfSessions.find(function(s){ return s._id===sessionId; });
@@ -889,7 +935,7 @@ function editShotSessionById(sessionId){
   editShotSession(session);
 }
 function editShotSession(session){
-  currentSession = {mode:session.mode, attempts: session.attempts.slice(), editingId: session._id, date: session.date, ts: session.ts};
+  currentSession = {mode:session.mode, entries: session.entries.slice(), editingId: session._id, date: session.date, ts: session.ts};
   currentShotPin = null;
   currentShotSituation = null;
   switchPlayerTab(1);
@@ -898,6 +944,7 @@ function editShotSession(session){
   document.getElementById('sessionModeLabel').textContent = (session.mode==='practice'?'練習':'試合') + '(編集中)';
   renderShotCourtPins();
   renderSituationChips();
+  renderEntryList();
   updateShotStatus();
 }
 async function deleteShotSessionFlow(sessionId){
@@ -917,10 +964,10 @@ function aggregateBySituation(sessions, modeFilter){
   var stats = {};
   sessions.forEach(function(sess){
     if(modeFilter && modeFilter!=='all' && sess.mode!==modeFilter) return;
-    sess.attempts.forEach(function(a){
-      if(!stats[a.situation]) stats[a.situation] = {makes:0, attempts:0};
-      stats[a.situation].attempts++;
-      if(a.result==='in') stats[a.situation].makes++;
+    sess.entries.forEach(function(e){
+      if(!stats[e.situation]) stats[e.situation] = {makes:0, attempts:0};
+      stats[e.situation].attempts += e.attempts;
+      stats[e.situation].makes += e.makes;
     });
   });
   return stats;
@@ -930,11 +977,11 @@ function aggregateByRange(sessions, modeFilter){
   rangeOrder.forEach(function(r){ stats[r] = {makes:0, attempts:0}; });
   sessions.forEach(function(sess){
     if(modeFilter && modeFilter!=='all' && sess.mode!==modeFilter) return;
-    sess.attempts.forEach(function(a){
-      var r = pinRange[a.pinId];
+    sess.entries.forEach(function(e){
+      var r = pinRange[e.pinId];
       if(!r) return;
-      stats[r].attempts++;
-      if(a.result==='in') stats[r].makes++;
+      stats[r].attempts += e.attempts;
+      stats[r].makes += e.makes;
     });
   });
   return stats;
@@ -996,11 +1043,11 @@ function aggregatePinStats(sessions, modeFilter, situationFilter, dateStart, dat
     if(dateStart && sess.date < dateStart) return;
     if(dateEnd && sess.date > dateEnd) return;
     if(modeFilter && modeFilter!=='all' && sess.mode!==modeFilter) return;
-    sess.attempts.forEach(function(a){
-      if(situationFilter && situationFilter!=='all' && a.situation!==situationFilter) return;
-      if(!stats[a.pinId]) stats[a.pinId] = {makes:0, attempts:0};
-      stats[a.pinId].attempts++;
-      if(a.result==='in') stats[a.pinId].makes++;
+    sess.entries.forEach(function(e){
+      if(situationFilter && situationFilter!=='all' && e.situation!==situationFilter) return;
+      if(!stats[e.pinId]) stats[e.pinId] = {makes:0, attempts:0};
+      stats[e.pinId].attempts += e.attempts;
+      stats[e.pinId].makes += e.makes;
     });
   });
   return stats;
@@ -1009,12 +1056,12 @@ function extractSeries(sessions, pinId, modeFilter, situationFilter){
   var byDate = {};
   sessions.forEach(function(sess){
     if(modeFilter && modeFilter!=='all' && sess.mode!==modeFilter) return;
-    sess.attempts.forEach(function(a){
-      if(pinId && a.pinId!==pinId) return;
-      if(situationFilter && situationFilter!=='all' && a.situation!==situationFilter) return;
+    sess.entries.forEach(function(e){
+      if(pinId && e.pinId!==pinId) return;
+      if(situationFilter && situationFilter!=='all' && e.situation!==situationFilter) return;
       if(!byDate[sess.date]) byDate[sess.date] = {makes:0, attempts:0, ts:sess.ts};
-      byDate[sess.date].attempts++;
-      if(a.result==='in') byDate[sess.date].makes++;
+      byDate[sess.date].attempts += e.attempts;
+      byDate[sess.date].makes += e.makes;
     });
   });
   return Object.keys(byDate).sort().map(function(d){
@@ -1130,7 +1177,7 @@ function computeTrendExtremes(perPlayerSeries, playerNames){
 /* ---------------- gamification: personal best / streak ---------------- */
 function computeSessionFG(session){
   var makes=0, attempts=0;
-  session.attempts.forEach(function(a){ attempts++; if(a.result==='in') makes++; });
+  session.entries.forEach(function(e){ attempts+=e.attempts; makes+=e.makes; });
   return {makes:makes, attempts:attempts, pct: pct(makes, attempts)};
 }
 function computePersonalBest(sessions){
@@ -1196,28 +1243,60 @@ async function renderMyStats(){
   html += '<div class="stat-section"><p class="goal-intro">改善のヒント</p>' +
     '<div class="advice-card mid">' + suggestions.map(function(s){ return '<p class="advice-body" style="margin-bottom:6px;">・'+escapeHtml(s)+'</p>'; }).join('') + '</div></div>';
 
-  html += '<div class="stat-section"><p class="goal-intro">過去の記録</p><div id="pastSessionsList"></div></div>';
+  html += '<div class="stat-section"><p class="goal-intro">過去の記録(日付別)</p>' +
+    '<div class="date-strip" id="dateStrip"></div>' +
+    '<div id="dateDetail"></div></div>';
 
   container.innerHTML = html;
   paintPinsOnCourt(document.getElementById('selfHeatmapPins'), overallStats);
   rangeRedrawFns['selfShot'] = drawSelfAreaTrend;
   drawSelfAreaTrend();
-  renderPastSessionsList(sessions);
+  renderDateStrip(sessions);
 }
-function renderPastSessionsList(sessions){
-  var el = document.getElementById('pastSessionsList');
-  var sorted = sessions.slice().reverse().slice(0,20);
-  if(sorted.length===0){ el.innerHTML = '<p class="placeholder">記録がありません</p>'; return; }
-  el.innerHTML = sorted.map(function(s){
+var selectedRecordDate = null;
+function renderDateStrip(sessions){
+  var el = document.getElementById('dateStrip');
+  var dates = [];
+  sessions.forEach(function(s){ if(dates.indexOf(s.date)===-1) dates.push(s.date); });
+  dates.sort();
+  if(!selectedRecordDate || dates.indexOf(selectedRecordDate)===-1){
+    selectedRecordDate = dates[dates.length-1];
+  }
+  el.innerHTML = dates.map(function(d){
+    var parts = d.split('-');
+    var label = parts[1]+'/'+parts[2];
+    var sel = d===selectedRecordDate;
+    return '<button class="date-chip'+(sel?' selected':'')+'" onclick="selectRecordDate(\''+d+'\')">'+label+'</button>';
+  }).join('');
+  var activeChip = el.querySelector('.date-chip.selected');
+  if(activeChip){ activeChip.scrollIntoView({inline:'center', block:'nearest'}); }
+  renderDateDetail(sessions, selectedRecordDate);
+}
+function selectRecordDate(date){
+  selectedRecordDate = date;
+  renderDateStrip(selfSessions);
+}
+function renderDateDetail(sessions, date){
+  var el = document.getElementById('dateDetail');
+  var daySessions = sessions.filter(function(s){ return s.date===date; });
+  if(daySessions.length===0){ el.innerHTML = '<p class="placeholder">記録がありません</p>'; return; }
+  var totalAttempts=0, totalMakes=0;
+  daySessions.forEach(function(s){ var f=computeSessionFG(s); totalAttempts+=f.attempts; totalMakes+=f.makes; });
+  var html = '<div class="stat-row">' +
+    '<div class="stat-card"><p class="stat-label">'+date+'の成績</p><p class="stat-num">'+pct(totalMakes,totalAttempts)+'<span>%</span></p></div>' +
+    '<div class="stat-card"><p class="stat-label">試投数</p><p class="stat-num">'+totalAttempts+'<span>本</span></p></div>' +
+  '</div>';
+  html += daySessions.map(function(s){
     var f = computeSessionFG(s);
     var modeLabel = s.mode==='practice' ? '練習' : '試合';
     return '<div class="session-row">' +
-      '<div><p class="session-date">'+s.date+'('+modeLabel+')</p><p class="session-fg">'+f.makes+'/'+f.attempts+' ('+f.pct+'%)</p></div>' +
+      '<div><p class="session-date">'+modeLabel+'</p><p class="session-fg">'+f.makes+'/'+f.attempts+' ('+f.pct+'%)</p></div>' +
       '<div class="session-actions">' +
       '<button class="manage-btn" onclick="editShotSessionById(\''+s._id+'\')">編集</button>' +
       '<button class="manage-btn danger" onclick="deleteShotSessionFlow(\''+s._id+'\')">削除</button>' +
       '</div></div>';
   }).join('');
+  el.innerHTML = html;
 }
 function drawSelfAreaTrend(){
   var areaId = document.getElementById('selfAreaSelect').value || null;
